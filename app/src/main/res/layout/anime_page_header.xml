@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/poster_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:alpha="0.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/poster"
+        android:layout_marginBottom="-25dp"
+        tools:src="@drawable/poster_large"/>
+
+    <View
+        android:id="@+id/backdrop_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/anime_back_gradient"
+        android:backgroundTint="?android:attr/colorBackground"
+        app:layout_constraintBottom_toBottomOf="@id/poster_back"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/poster"
+        android:layout_width="@dimen/poster_small_width"
+        android:layout_height="@dimen/poster_small_height"
+        tools:src="@drawable/poster_small"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="25dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

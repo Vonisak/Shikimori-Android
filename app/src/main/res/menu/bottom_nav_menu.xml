@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/anime_list_item"
+        android:enabled="true"
+        android:menuCategory="secondary"
+        android:icon="@drawable/outline_list_alt_24"
+        android:title="@string/bottom_nav_anime_list_title"/>
+
+    <item
+        android:id="@+id/anime_profile_item"
+        android:enabled="true"
+        android:menuCategory="secondary"
+        android:icon="@drawable/outline_person_outline_24"
+        android:title="@string/bottom_nav_profile_title"/>
+
+    <item
+        android:id="@+id/anime_settings_item"
+        android:enabled="true"
+        android:menuCategory="secondary"
+        android:icon="@drawable/outline_settings_24"
+        android:title="@string/bottom_nav_settings_title"/>
+
+</menu>

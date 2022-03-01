@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Shikimori Android</string>
+    <string name="bottom_nav_anime_list_title">Список</string>
+    <string name="bottom_nav_profile_title">Профиль</string>
+    <string name="bottom_nav_settings_title">Настройки</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="anime_page_name_prefix">Название:</string>
+    <string name="anime_page_episodes">Эпизоды:</string>
+    <string name="anime_page_type">Тип:</string>
+    <string name="main_list_menu_search">Поиск</string>
+    <string name="main_list_menu_filter">Фильтр</string>
+    <string name="anime_basic_info_duration">Длительность эпизода:</string>
+    <string name="anime_basic_info_rating">Рейтинг:</string>
+    <string name="anime_basic_info_status">Статус:</string>
+    <string name="anime_status_ongoing">Онгоинг</string>
+    <string name="anime_status_released">Вышло</string>
+    <string name="anime_status_anons">Анонс</string>
+    <string name="anime_page_spinner_hint">Добавить в список</string>
+    <string name="get_auth_code">Получить код авторизации</string>
+    <string name="input_auth_code">Код авторизации</string>
+    <string name="auth_button">Авторизироваться</string>
+    <string name="sign_out_settings">Выйти из аккаунта</string>
+</resources>
