@@ -3,8 +3,6 @@
     <string name="bottom_nav_anime_list_title">Список</string>
     <string name="bottom_nav_profile_title">Профиль</string>
     <string name="bottom_nav_settings_title">Настройки</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="anime_page_name_prefix">Название:</string>
     <string name="anime_page_episodes">Эпизоды:</string>
     <string name="anime_page_type">Тип:</string>
@@ -21,4 +19,17 @@
     <string name="input_auth_code">Код авторизации</string>
     <string name="auth_button">Авторизироваться</string>
     <string name="sign_out_settings">Выйти из аккаунта</string>
+    <string name="profile_planned">Запланировано:</string>
+    <string name="profile_complete">Просмотрено:</string>
+    <string name="profile_watching">Смотрю:</string>
+    <string name="profile_on_hold">Отложено:</string>
+    <string name="profile_dropped">Брошено:</string>
+    <string name="profile_user_list">Список аниме</string>
+    <string name="header_user_list_name">Название</string>
+    <string name="header_user_list_kind">Тип</string>
+    <string name="header_user_list_episodes">Эпизоды</string>
+    <string name="header_user_list_score">Оценка</string>
+    <string name="save">Сохранить</string>
+    <string name="add_in_my_list">Добавить в список</string>
+    <string name="edit_in_my_list">Изменить в списке</string>
 </resources>

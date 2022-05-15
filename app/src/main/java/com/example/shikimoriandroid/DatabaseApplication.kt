@@ -2,7 +2,7 @@ package com.example.shikimoriandroid
 
 import android.app.Application
 import androidx.room.Room
-import com.example.shikimoriandroid.localBd.Database
+import com.example.shikimoriandroid.data.datasource.localBd.Database
 
 class DatabaseApplication: Application() {
 
