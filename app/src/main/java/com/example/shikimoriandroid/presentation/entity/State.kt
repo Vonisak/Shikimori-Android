@@ -1,4 +1,4 @@
-package com.example.shikimoriandroid.domain.entity
+package com.example.shikimoriandroid.presentation.entity
 
 sealed class State<T> {
     data class Success<T>(var data: T) : State<T>()

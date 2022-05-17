@@ -15,9 +15,11 @@ import com.example.shikimoriandroid.databinding.FragmentMainAnimeListBinding
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.example.shikimoriandroid.ui.activity.MainActivity
-import com.example.shikimoriandroid.domain.entity.State
+import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.MainListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainAnimeListFragment :
     BaseBottomNavFragment(),
     SearchView.OnQueryTextListener,
@@ -45,7 +47,7 @@ class MainAnimeListFragment :
     private var isCreate = true
     private var searchStr = ""
     //private lateinit var sheetBehavior: BottomSheetBehavior<View>
-    private val modalBottomSheet = MainListBottomSheetFilterFragment(this)
+    private val modalBottomSheet = MainListBottomSheetFilterFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -111,7 +113,7 @@ class MainAnimeListFragment :
     private fun observeModel() {
         Log.i("TAG", "observeModel")
 
-        mainListViewModel.getState().observe(viewLifecycleOwner) { it ->
+        mainListViewModel.state.observe(viewLifecycleOwner) {
             when (it) {
                 is State.Pending -> {
                     binding.swipeRefresh.isRefreshing = true

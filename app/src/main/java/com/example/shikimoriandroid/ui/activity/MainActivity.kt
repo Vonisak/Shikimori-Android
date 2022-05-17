@@ -10,10 +10,13 @@ import com.example.shikimoriandroid.R
 import com.example.shikimoriandroid.databinding.ActivityMainBinding
 import com.example.shikimoriandroid.data.datasource.localBd.AuthDao
 import com.example.shikimoriandroid.data.datasource.localBd.AuthInfo
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class MainActivity @Inject constructor(): AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!

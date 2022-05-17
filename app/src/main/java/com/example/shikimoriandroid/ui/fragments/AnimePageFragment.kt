@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.shikimoriandroid.domain.utils.AnimeStringSwitcher
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.R
-import com.example.shikimoriandroid.domain.entity.State
+import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.databinding.FragmentAnimePageBinding
 import com.example.shikimoriandroid.data.model.anime.UserRate
@@ -23,8 +23,10 @@ import com.example.shikimoriandroid.data.model.anime.UserRates
 import com.example.shikimoriandroid.presentation.viewModels.AnimePageViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 
+@AndroidEntryPoint
 class AnimePageFragment : Fragment() {
 
     private var _binding: FragmentAnimePageBinding? = null
@@ -81,7 +83,7 @@ class AnimePageFragment : Fragment() {
     }
 
     private fun observeModel() {
-        animePageViewModel.getAnimeInfoState().observe(viewLifecycleOwner) { it ->
+        animePageViewModel.animeInfoState.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is State.Pending -> {
                     //binding.swipeRefresh.isRefreshing = true
@@ -159,7 +161,7 @@ class AnimePageFragment : Fragment() {
             when (it) {
                 is State.Pending -> {}
                 is State.Fail -> {
-                    Toast.makeText(activity, it.error?.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, it.error.toString(), Toast.LENGTH_SHORT).show()
                 }
                 is State.Success -> {
                     Toast.makeText(activity, "success", Toast.LENGTH_SHORT).show()

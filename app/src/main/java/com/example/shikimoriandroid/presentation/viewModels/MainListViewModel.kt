@@ -1,35 +1,55 @@
 package com.example.shikimoriandroid.presentation.viewModels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.shikimoriandroid.domain.entity.State
+import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.data.model.anime.AnimeInfo
-import com.example.shikimoriandroid.data.datasource.retrofit.ShikimoriAPI
-import com.example.shikimoriandroid.data.datasource.retrofit.ShikimoriRetrofitClient
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.example.shikimoriandroid.domain.usecases.GetMainAnimeListUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainListViewModel: ViewModel() {
-    private val provider: ShikimoriAPI = ShikimoriRetrofitClient.retrofit.create(
-    ShikimoriAPI::class.java
-    )
-    private val state = MutableLiveData<State<List<AnimeInfo>>>()
+@HiltViewModel
+class MainListViewModel @Inject constructor(private val getMainAnimeListUseCase: GetMainAnimeListUseCase) :
+    ViewModel() {
 
-    fun getState(): LiveData<State<List<AnimeInfo>>> = state
+    private val _state = MutableLiveData<State<List<AnimeInfo>>>()
+    val state: LiveData<State<List<AnimeInfo>>> = _state
 
-    fun getAnimeList(count: Int, page: Int, order: String, searchStr: String = "", genre: String = "") {
-        state.postValue(State.Pending())
-        provider.getAnimes(count, page, order, searchStr, genre)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    state.postValue(State.Success(it))
-                },
-                {
-                    state.postValue(State.Fail(it))
-                }
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        handleError(throwable)
+    }
+
+    fun getAnimeList(
+        count: Int,
+        page: Int,
+        order: String,
+        searchStr: String = "",
+        genre: String = ""
+    ) {
+        _state.value = State.Pending()
+        CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            _state.postValue(
+                State.Success(
+                    getMainAnimeListUseCase.invoke(
+                        count = count,
+                        page = page,
+                        sortBy = order,
+                        searchStr = searchStr,
+                        genre = genre
+                    )
+                )
             )
+        }
+        Log.i("TAG", "null is ${_state.value.toString()}")
+    }
+
+    private fun handleError(error: Throwable) {
+        _state.postValue(State.Fail(error))
     }
 }

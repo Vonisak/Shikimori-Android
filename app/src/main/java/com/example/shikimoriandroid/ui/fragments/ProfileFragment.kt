@@ -10,10 +10,12 @@ import androidx.fragment.app.viewModels
 import com.example.shikimoriandroid.*
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.databinding.FragmentProfileBinding
-import com.example.shikimoriandroid.domain.entity.State
+import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.presentation.viewModels.ProfileViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileFragment : BaseBottomNavFragment() {
 
     private var _binding: FragmentProfileBinding? = null
@@ -46,7 +48,7 @@ class ProfileFragment : BaseBottomNavFragment() {
     }
 
     private fun observeModel() {
-        profileViewModel.getState().observe(viewLifecycleOwner) { it ->
+        profileViewModel.userProfileState.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is State.Pending -> {
                     binding.swipeRefresh.isRefreshing = true

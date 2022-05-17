@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.databinding.FragmentSettingsBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
+@AndroidEntryPoint
 class SettingsFragment : BaseBottomNavFragment() {
 
     private var _binding: FragmentSettingsBinding? = null

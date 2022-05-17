@@ -3,7 +3,9 @@ package com.example.shikimoriandroid
 import android.app.Application
 import androidx.room.Room
 import com.example.shikimoriandroid.data.datasource.localBd.Database
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class DatabaseApplication: Application() {
 
     lateinit var database: Database

@@ -3,34 +3,40 @@ package com.example.shikimoriandroid.presentation.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.shikimoriandroid.domain.entity.State
+import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.data.model.user.UserInfo
-import com.example.shikimoriandroid.data.datasource.retrofit.ShikimoriAPI
-import com.example.shikimoriandroid.data.datasource.retrofit.ShikimoriRetrofitClient
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.example.shikimoriandroid.domain.usecases.GetUserByIdUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProfileViewModel: ViewModel() {
+@HiltViewModel
+class ProfileViewModel @Inject constructor(private val getUserByIdUseCase: GetUserByIdUseCase) :
+    ViewModel() {
 
-    private val provider: ShikimoriAPI = ShikimoriRetrofitClient.retrofit.create(
-        ShikimoriAPI::class.java
-    )
-    private val state = MutableLiveData<State<UserInfo>>()
+    private val _userProfileState = MutableLiveData<State<UserInfo>>()
+    val userProfileState: LiveData<State<UserInfo>> = _userProfileState
 
-    fun getState(): LiveData<State<UserInfo>> = state
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        handleError(throwable)
+    }
+
 
     fun getProfileInfo(accessToken: String, userId: Int) {
-        state.postValue(State.Pending())
-        provider.getUserById(accessToken = "Bearer $accessToken", id = userId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    state.postValue(State.Success(it))
-                },
-                {
-                    state.postValue(State.Fail(it))
-                }
+        _userProfileState.postValue(State.Pending())
+        CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            _userProfileState.postValue(
+                State.Success(
+                    getUserByIdUseCase.invoke(accessToken = accessToken, id = userId)
+                )
             )
+        }
+    }
+
+    private fun handleError(error: Throwable) {
+        _userProfileState.postValue(State.Fail(error))
     }
 }

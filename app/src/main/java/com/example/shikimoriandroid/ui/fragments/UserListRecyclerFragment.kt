@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.R
-import com.example.shikimoriandroid.domain.entity.State
+import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.adapters.UserListAdapter
 import com.example.shikimoriandroid.databinding.FragmentUserListRecyclerBinding
 import com.example.shikimoriandroid.data.model.user.AnimeRates
 import com.example.shikimoriandroid.presentation.viewModels.UserAnimeListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserListRecyclerFragment(val position: Int) : Fragment() {
 
     private var _binding: FragmentUserListRecyclerBinding? = null
@@ -83,7 +85,7 @@ class UserListRecyclerFragment(val position: Int) : Fragment() {
     }
 
     private fun observeModel() {
-        userListViewModel.getState().observe(viewLifecycleOwner) {
+        userListViewModel.userListState.observe(viewLifecycleOwner) {
             when (it) {
                 is State.Pending -> {
                     //binding.swipeRefresh.isRefreshing = true

@@ -26,6 +26,8 @@ class FilterRecyclerAdapter(
 
     override fun getItemCount(): Int = values.size
 
+    //TODO Сделать 2 вьюхолдера для радио баттон и чек бокса
+    //TODO Или подумать еще раз... Нужен ли там вообще ресайклер?
     inner class FilterItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         private val binding = when (layout) {
             R.layout.filter_check_box_item -> FilterCheckBoxItemBinding.bind(view)

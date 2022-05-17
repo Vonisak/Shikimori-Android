@@ -9,7 +9,7 @@ import com.example.shikimoriandroid.databinding.FragmentMainListBottomSheetFilte
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MainListBottomSheetFilterFragment(private val listener: OnClickListener) : BottomSheetDialogFragment() {
+class MainListBottomSheetFilterFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentMainListBottomSheetFilterBinding? = null
     private val binding get() = _binding!!

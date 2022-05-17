@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import com.example.shikimoriandroid.ui.adapters.UserListPagerAdapter
 import com.example.shikimoriandroid.databinding.FragmentUserListBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserListFragment : Fragment() {
 
     private var _binding: FragmentUserListBinding? = null
