@@ -58,6 +58,7 @@ class AnimePageFragment : Fragment() {
         if((activity as MainActivity).users.isEmpty()) {
             animePageViewModel.getAnime(aId, "")
         } else {
+                //TODO избавься от БД
             (activity as MainActivity).users[0].accessToken.let {
                 if (it != null) {
                     animePageViewModel.getAnime(aId, it)

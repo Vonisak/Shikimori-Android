@@ -38,7 +38,7 @@ class AnimePageViewModel @Inject constructor(
         CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             _animeInfoState.postValue(
                 State.Success(
-                    getAnimeUseCase.invoke(
+                    getAnimeUseCase(
                         id = id,
                         accessToken = "Bearer $accessToken"
                     )
@@ -50,7 +50,7 @@ class AnimePageViewModel @Inject constructor(
     fun postUserRate(accessToken: String, userRates: UserRates) {
         postUserRateState.postValue(State.Pending())
         CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-            createRateUseCase.invoke(accessToken = "Bearer $accessToken", userRate = userRates)
+            createRateUseCase(accessToken = "Bearer $accessToken", userRate = userRates)
         }
     }
 

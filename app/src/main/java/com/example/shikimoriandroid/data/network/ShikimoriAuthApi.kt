@@ -19,4 +19,14 @@ interface ShikimoriAuthApi {
         @Field("code") authCode: String,
         @Field("redirect_uri") redirectUri: String = "urn:ietf:wg:oauth:2.0:oob"
     ): AuthResponse
+
+    @FormUrlEncoded
+    @POST("oauth/token")
+    suspend fun updateTokens(
+        @Header("User-Agent") userAgent: String = Constants.appName,
+        @Field("grant_type") grantType: String = "refresh_token",
+        @Field("client_id") clientId: String = Constants.clientId,
+        @Field("client_secret") clientSecret: String = Constants.clientSecret,
+        @Field("refresh_token") refreshToken: String
+    ): AuthResponse
 }

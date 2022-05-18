@@ -23,6 +23,7 @@ class SettingsFragment : BaseBottomNavFragment() {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         binding.signOutButton.setOnClickListener {
+            //TODO избавься от БД
             runBlocking(Dispatchers.IO) {
                 (activity as MainActivity).userDao.cleanUsers()
             }

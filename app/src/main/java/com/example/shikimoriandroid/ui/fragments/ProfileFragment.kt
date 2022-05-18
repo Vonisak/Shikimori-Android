@@ -28,9 +28,9 @@ class ProfileFragment : BaseBottomNavFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        (activity as MainActivity).users[0].let { user ->
-            user.accessToken?.let { profileViewModel.getProfileInfo(it, user.uid) }
-        }
+
+        profileViewModel.getProfileInfo()
+
         observeModel()
         listeners()
         return binding.root
@@ -38,9 +38,7 @@ class ProfileFragment : BaseBottomNavFragment() {
 
     private fun listeners() {
         binding.swipeRefresh.setOnRefreshListener {
-            (activity as MainActivity).users[0].let { user ->
-                user.accessToken?.let { profileViewModel.getProfileInfo(it, user.uid) }
-            }
+            profileViewModel.getProfileInfo()
         }
         binding.userList.setOnClickListener {
             navigate(R.id.action_profileFragment_to_userListFragment)
@@ -58,31 +56,32 @@ class ProfileFragment : BaseBottomNavFragment() {
                     Toast.makeText(requireContext(), "Fail: ${it.error}", Toast.LENGTH_SHORT).show()
                 }
                 is State.Success -> {
-                    if ((activity as MainActivity).users.isNotEmpty()) {
-                        Log.i("TAG", it.data.toString())
-                        binding.profileHeader.profileNickname.text = it.data.nickname
+                    Log.i("TAG", it.data.toString())
+                    binding.profileHeader.profileNickname.text = it.data.nickname
 
-                        glideAdapter.loadImage(
-                            it.data.images.imageX148,
-                            binding.profileHeader.profileImage)
+                    glideAdapter.loadImage(
+                        it.data.images.imageX148,
+                        binding.profileHeader.profileImage
+                    )
 
-                        binding.profileHeader.profilePlanned.text = it.data.stats.statuses.anime[0].size.toString()
-                        binding.profileHeader.profileWatching.text = it.data.stats.statuses.anime[1].size.toString()
-                        binding.profileHeader.profileCompleted.text = it.data.stats.statuses.anime[2].size.toString()
-                        binding.profileHeader.profileOnHold.text = it.data.stats.statuses.anime[3].size.toString()
-                        binding.profileHeader.profileDropped.text = it.data.stats.statuses.anime[4].size.toString()
+                    binding.profileHeader.profilePlanned.text =
+                        it.data.stats.statuses.anime[0].size.toString()
+                    binding.profileHeader.profileWatching.text =
+                        it.data.stats.statuses.anime[1].size.toString()
+                    binding.profileHeader.profileCompleted.text =
+                        it.data.stats.statuses.anime[2].size.toString()
+                    binding.profileHeader.profileOnHold.text =
+                        it.data.stats.statuses.anime[3].size.toString()
+                    binding.profileHeader.profileDropped.text =
+                        it.data.stats.statuses.anime[4].size.toString()
 
-                        var info = ""
-                        it.data.commonInfo.forEachIndexed { index, s ->
-                            if (index != it.data.commonInfo.size-1) info += "$s / "
-                        }
-                        binding.profileHeader.profileCommonInfo.text = info
-
-                        binding.swipeRefresh.isRefreshing = false
-                    } else {
-                        //navigate(R.id.action_profileFragment_to_authFragment)
-                        //findNavController().backQueue.removeLast()
+                    var info = ""
+                    it.data.commonInfo.forEachIndexed { index, s ->
+                        if (index != it.data.commonInfo.size - 1) info += "$s / "
                     }
+                    binding.profileHeader.profileCommonInfo.text = info
+
+                    binding.swipeRefresh.isRefreshing = false
                 }
             }
         }

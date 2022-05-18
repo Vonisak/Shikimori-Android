@@ -113,7 +113,7 @@ class MainAnimeListFragment :
     private fun observeModel() {
         Log.i("TAG", "observeModel")
 
-        mainListViewModel.state.observe(viewLifecycleOwner) {
+        mainListViewModel.mainAnimeListState.observe(viewLifecycleOwner) {
             when (it) {
                 is State.Pending -> {
                     binding.swipeRefresh.isRefreshing = true

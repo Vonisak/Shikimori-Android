@@ -8,12 +8,10 @@ import javax.inject.Inject
 
 class ShikimoriAuthRepositoryImpl @Inject constructor(private val dataSource: AuthDataSource) :
     ShikimoriAuthRepository {
-    override suspend fun getTokens(
-        userAgent: String,
-        grantType: String,
-        clientId: String,
-        clientSecret: String,
-        authCode: String,
-        redirectUri: String
-    ): AuthResponse = dataSource.getTokens(authCode = authCode)
+
+    override suspend fun getTokens(authCode: String): AuthResponse =
+        dataSource.getTokens(authCode = authCode)
+
+    override suspend fun updateTokens(refreshToken: String): AuthResponse =
+        dataSource.updateTokens(refreshToken = refreshToken)
 }

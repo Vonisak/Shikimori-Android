@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.data.model.user.AnimeRates
 import com.example.shikimoriandroid.domain.repository.ShikimoriUserRepository
+import com.example.shikimoriandroid.domain.usecases.GetAccessTokenUseCase
+import com.example.shikimoriandroid.domain.usecases.GetCurrentUserUseCase
 import com.example.shikimoriandroid.domain.usecases.GetUserAnimeListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -15,7 +17,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserAnimeListViewModel @Inject constructor(private val getUserAnimeListUseCase: GetUserAnimeListUseCase) :
+class UserAnimeListViewModel @Inject constructor(
+    private val getUserAnimeListUseCase: GetUserAnimeListUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
+) :
     ViewModel() {
 
     private val _userListState = MutableLiveData<State<List<AnimeRates>>>()
@@ -26,17 +32,20 @@ class UserAnimeListViewModel @Inject constructor(private val getUserAnimeListUse
     }
 
     fun getUserAnimeRates(
-        accessToken: String,
-        userId: Int,
         limit: Int,
         page: Int,
         status: String
     ) {
         _userListState.postValue(State.Pending())
+
+        val accessToken = getAccessTokenUseCase()
+
+        if (accessToken != null)
         CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            val userId = getCurrentUserUseCase("Bearer $accessToken").id
             _userListState.postValue(
                 State.Success(
-                    getUserAnimeListUseCase.invoke(
+                    getUserAnimeListUseCase(
                         accessToken = accessToken,
                         userId = userId,
                         count = limit,

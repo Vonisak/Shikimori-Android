@@ -47,13 +47,13 @@ class MainActivity @Inject constructor(): AppCompatActivity() {
                     true
                 }
                 R.id.anime_profile_item -> {
-                    if (users.isEmpty()) {
-                        supportActionBar?.title = "Авторизация"
-                        findNavController(R.id.nav_host_fragment).navigate(R.id.authFragment)
-                    } else {
+//                    if (users.isEmpty()) {
+//                        supportActionBar?.title = "Авторизация"
+//                        findNavController(R.id.nav_host_fragment).navigate(R.id.authFragment)
+                    //} else {
                         supportActionBar?.title = "Профиль"
                         findNavController(R.id.nav_host_fragment).navigate(R.id.profileFragment)
-                    }
+                    //}
                     deck.add(R.id.anime_profile_item)
                     true
                 }

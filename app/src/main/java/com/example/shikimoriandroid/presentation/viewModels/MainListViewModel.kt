@@ -18,8 +18,8 @@ import javax.inject.Inject
 class MainListViewModel @Inject constructor(private val getMainAnimeListUseCase: GetMainAnimeListUseCase) :
     ViewModel() {
 
-    private val _state = MutableLiveData<State<List<AnimeInfo>>>()
-    val state: LiveData<State<List<AnimeInfo>>> = _state
+    private val _mainAnimeListState = MutableLiveData<State<List<AnimeInfo>>>()
+    val mainAnimeListState: LiveData<State<List<AnimeInfo>>> = _mainAnimeListState
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         handleError(throwable)
@@ -32,11 +32,11 @@ class MainListViewModel @Inject constructor(private val getMainAnimeListUseCase:
         searchStr: String = "",
         genre: String = ""
     ) {
-        _state.value = State.Pending()
+        _mainAnimeListState.value = State.Pending()
         CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-            _state.postValue(
+            _mainAnimeListState.postValue(
                 State.Success(
-                    getMainAnimeListUseCase.invoke(
+                    getMainAnimeListUseCase(
                         count = count,
                         page = page,
                         sortBy = order,
@@ -46,10 +46,10 @@ class MainListViewModel @Inject constructor(private val getMainAnimeListUseCase:
                 )
             )
         }
-        Log.i("TAG", "null is ${_state.value.toString()}")
+        Log.i("TAG", "null is ${_mainAnimeListState.value.toString()}")
     }
 
     private fun handleError(error: Throwable) {
-        _state.postValue(State.Fail(error))
+        _mainAnimeListState.postValue(State.Fail(error))
     }
 }

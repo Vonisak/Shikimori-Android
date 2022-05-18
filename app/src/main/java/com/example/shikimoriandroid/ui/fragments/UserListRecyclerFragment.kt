@@ -112,17 +112,7 @@ class UserListRecyclerFragment(val position: Int) : Fragment() {
     }
 
     private fun animeListRequest() {
-        (activity as MainActivity).users[0].let { user ->
-            user.accessToken?.let {
-                userListViewModel.getUserAnimeRates(
-                    it,
-                    user.uid,
-                    30,
-                    page,
-                    status
-                )
-            }
-        }
+        userListViewModel.getUserAnimeRates(30, page, status)
     }
 
     override fun onDestroy() {
