@@ -3,27 +3,36 @@ package com.example.shikimoriandroid.ui.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import com.example.shikimoriandroid.DatabaseApplication
 import com.example.shikimoriandroid.R
 import com.example.shikimoriandroid.databinding.ActivityMainBinding
 import com.example.shikimoriandroid.data.datasource.localBd.AuthDao
 import com.example.shikimoriandroid.data.datasource.localBd.AuthInfo
+import com.example.shikimoriandroid.presentation.viewModels.MainViewModel
+import com.example.shikimoriandroid.ui.navigation.Screens
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity @Inject constructor(): AppCompatActivity() {
+class MainActivity @Inject constructor() : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private val deck = ArrayDeque<Int>()
     private lateinit var reselectedListener: ItemReselectedListener
-    lateinit var users: List<AuthInfo>
-    lateinit var userDao: AuthDao
+    private val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+    private val navigator = AppNavigator(this, R.id.nav_host_fragment)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +43,8 @@ class MainActivity @Inject constructor(): AppCompatActivity() {
         deck.add(R.id.anime_list_item)
         setContentView(binding.root)
         navSettings()
-        updateUsersInfo()
+
+        navigatorHolder.setNavigator(navigator)
     }
 
     private fun navSettings() {
@@ -42,24 +52,24 @@ class MainActivity @Inject constructor(): AppCompatActivity() {
             when (it.itemId) {
                 R.id.anime_list_item -> {
                     supportActionBar?.title = "Список"
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.mainAnimeListFragment)
+                    viewModel.navigateTo(Screens.mainList())
                     deck.add(R.id.anime_list_item)
                     true
                 }
                 R.id.anime_profile_item -> {
-//                    if (users.isEmpty()) {
-//                        supportActionBar?.title = "Авторизация"
-//                        findNavController(R.id.nav_host_fragment).navigate(R.id.authFragment)
-                    //} else {
+                    if (viewModel.isUserAuth()) {
                         supportActionBar?.title = "Профиль"
-                        findNavController(R.id.nav_host_fragment).navigate(R.id.profileFragment)
-                    //}
+                        viewModel.navigateTo(Screens.profile())
+                    } else {
+                        supportActionBar?.title = "Авторизация"
+                        viewModel.navigateTo(Screens.auth())
+                    }
                     deck.add(R.id.anime_profile_item)
                     true
                 }
                 R.id.anime_settings_item -> {
                     supportActionBar?.title = "Настройки"
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.settingsFragment)
+                    viewModel.navigateTo(Screens.settings())
                     deck.add(R.id.anime_settings_item)
                     true
                 }
@@ -104,14 +114,6 @@ class MainActivity @Inject constructor(): AppCompatActivity() {
 
     interface ItemReselectedListener {
         fun reselect()
-    }
-
-    fun updateUsersInfo() {
-        userDao = (applicationContext as DatabaseApplication).database.authDao()
-        runBlocking(Dispatchers.IO) {
-            users = userDao.getAll()
-            Log.i("TAG", users.toString())
-        }
     }
 
 }

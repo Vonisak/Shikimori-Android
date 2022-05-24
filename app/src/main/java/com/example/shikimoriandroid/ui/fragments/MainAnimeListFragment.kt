@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shikimoriandroid.ui.adapters.AnimeListAdapter
@@ -17,10 +16,13 @@ import androidx.fragment.app.viewModels
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.MainListViewModel
+import com.example.shikimoriandroid.ui.navigation.Screens
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainAnimeListFragment :
+class MainAnimeListFragment(private val genre: String = "") :
     BaseBottomNavFragment(),
     SearchView.OnQueryTextListener,
     MainActivity.ItemReselectedListener,
@@ -32,14 +34,11 @@ class MainAnimeListFragment :
     private var animeList = mutableListOf<AnimeInfo>()
     private val glideAdapter = GlideAdapter(this)
     private val adapter: AnimeListAdapter = AnimeListAdapter(animeList, glideAdapter) { animeId ->
-        Log.i("TAG", "click $animeId")
-        val bundle = bundleOf("amount" to animeId)
-        navigate(R.id.action_mainAnimeListFragment_to_animePageFragment, bundle)
+        mainListViewModel.navigateTo(Screens.animePage(animeId))
     }
     private var page = 1
     private val limit = 20
     private var order = "ranked"
-    private var genre = ""
     private var visibleItemCount = 0
     private var totalItemCount = 0
     private var pastVisiblesItems = 0
@@ -55,8 +54,6 @@ class MainAnimeListFragment :
     ): View {
         _binding = FragmentMainAnimeListBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        genre = arguments?.getInt("genre").toString()
-        if (genre == "null") genre = ""
         Log.i("TAG", genre)
 
         if (isCreate) {

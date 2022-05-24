@@ -7,7 +7,9 @@ import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.data.model.anime.AnimeInfo
 import com.example.shikimoriandroid.data.model.anime.UserRates
 import com.example.shikimoriandroid.domain.usecases.CreateRateUseCase
+import com.example.shikimoriandroid.domain.usecases.GetAccessTokenUseCase
 import com.example.shikimoriandroid.domain.usecases.GetAnimeUseCase
+import com.example.shikimoriandroid.domain.usecases.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -18,8 +20,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AnimePageViewModel @Inject constructor(
     private val getAnimeUseCase: GetAnimeUseCase,
-    private val createRateUseCase: CreateRateUseCase
-) : ViewModel() {
+    private val createRateUseCase: CreateRateUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
+) : NavigationModel() {
 
 
     private val _animeInfoState = MutableLiveData<State<AnimeInfo>>()
@@ -33,9 +37,13 @@ class AnimePageViewModel @Inject constructor(
 
     fun getUserRateState(): LiveData<State<String>> = postUserRateState
 
-    fun getAnime(id: Int, accessToken: String) {
+    fun getAnime(id: Int) {
         _animeInfoState.postValue(State.Pending())
+
+        var accessToken = getAccessTokenUseCase()
+
         CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            if (accessToken == null) accessToken = ""
             _animeInfoState.postValue(
                 State.Success(
                     getAnimeUseCase(
@@ -47,14 +55,25 @@ class AnimePageViewModel @Inject constructor(
         }
     }
 
-    fun postUserRate(accessToken: String, userRates: UserRates) {
+    //TODO Подумай как сделать лучше
+    fun postUserRate(userRates: UserRates) {
         postUserRateState.postValue(State.Pending())
+        var accessToken = getAccessTokenUseCase()
+
         CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-            createRateUseCase(accessToken = "Bearer $accessToken", userRate = userRates)
+            if (accessToken == null) accessToken = ""
+            val userRate =
+                userRates.userRate.copy(userId = getCurrentUserUseCase("Bearer $accessToken").id)
+            createRateUseCase(
+                accessToken = "Bearer $accessToken",
+                userRate = userRates.copy(userRate = userRate)
+            )
         }
     }
 
     private fun handleError(error: Throwable) {
         _animeInfoState.postValue(State.Fail(error))
     }
+
+    fun isUserAuth(): Boolean = getAccessTokenUseCase() != null
 }

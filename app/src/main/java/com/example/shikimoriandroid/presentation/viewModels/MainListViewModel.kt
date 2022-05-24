@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.data.model.anime.AnimeInfo
 import com.example.shikimoriandroid.domain.usecases.GetMainAnimeListUseCase
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainListViewModel @Inject constructor(private val getMainAnimeListUseCase: GetMainAnimeListUseCase) :
-    ViewModel() {
+    NavigationModel() {
 
     private val _mainAnimeListState = MutableLiveData<State<List<AnimeInfo>>>()
     val mainAnimeListState: LiveData<State<List<AnimeInfo>>> = _mainAnimeListState

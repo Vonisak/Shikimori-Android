@@ -1,15 +1,23 @@
 package com.example.shikimoriandroid.ui.fragments
 
+import android.animation.ValueAnimator
+import android.app.ActionBar
 import android.content.Context
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.translation.TranslationManager
+import android.widget.ImageButton
 import android.widget.Toast
+import androidx.core.animation.doOnStart
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat.animate
 import androidx.core.view.isEmpty
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.shikimoriandroid.domain.utils.AnimeStringSwitcher
@@ -21,32 +29,35 @@ import com.example.shikimoriandroid.databinding.FragmentAnimePageBinding
 import com.example.shikimoriandroid.data.model.anime.UserRate
 import com.example.shikimoriandroid.data.model.anime.UserRates
 import com.example.shikimoriandroid.presentation.viewModels.AnimePageViewModel
+import com.example.shikimoriandroid.ui.navigation.Screens
+import com.example.shikimoriandroid.ui.utils.*
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 
 @AndroidEntryPoint
-class AnimePageFragment : Fragment() {
+class AnimePageFragment(private val animeId: Int) : Fragment() {
 
     private var _binding: FragmentAnimePageBinding? = null
     private val binding get() = _binding!!
     private val animePageViewModel: AnimePageViewModel by viewModels()
     private val glide = GlideAdapter(this)
     private lateinit var title: String
-    private var aId = 0
     private val userListOpt = listOf(
         "Просмотрено",
         "Брошено",
         "Отложено",
         "Запланировано",
-        "Смотрю")
+        "Смотрю"
+    )
     private val userListOptEng = listOf(
         "completed",
         "dropped",
         "on_hold",
         "planned",
-        "watching")
+        "watching"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,18 +65,14 @@ class AnimePageFragment : Fragment() {
     ): View {
         _binding = FragmentAnimePageBinding.inflate(inflater, container, false)
 
-        aId = arguments?.getInt("amount")!!
-        if((activity as MainActivity).users.isEmpty()) {
-            animePageViewModel.getAnime(aId, "")
+
+        if (animePageViewModel.isUserAuth()) {
+            binding.userRateActionButton.visibility = View.VISIBLE
         } else {
-                //TODO избавься от БД
-            (activity as MainActivity).users[0].accessToken.let {
-                if (it != null) {
-                    animePageViewModel.getAnime(aId, it)
-                    binding.userRateActionButton.visibility = View.VISIBLE
-                }
-            }
+            binding.userRateActionButton.visibility = View.GONE
         }
+
+        animePageViewModel.getAnime(animeId)
 
         binding.userRate.statusSpinner.setItems(userListOpt)
 
@@ -100,7 +107,8 @@ class AnimePageFragment : Fragment() {
                     when (it.data.status) {
                         "ongoing" -> {
                             binding.animeBasicInfo.episodes.visibility = View.GONE
-                            binding.animeBasicInfo.animePageEpisodesAired.text = it.data.episodesAired
+                            binding.animeBasicInfo.animePageEpisodesAired.text =
+                                it.data.episodesAired
                             binding.animeBasicInfo.animePageEpisodesTotal.text = it.data.episodes
                             binding.animeBasicInfo.status.text =
                                 resources.getString(R.string.anime_status_ongoing)
@@ -124,14 +132,21 @@ class AnimePageFragment : Fragment() {
                     binding.animeBasicInfo.animePageEpisodes.text = it.data.episodes
                     binding.animeBasicInfo.animePageNameRus.text = it.data.nameRus
                     binding.animeBasicInfo.animePageType.text = switcher.kindSwitch(it.data.kind)
-                    glide.loadImage("https://shikimori.one/${it.data.poster.preview}", binding.header.poster)
-                    glide.loadImage("https://shikimori.one/${it.data.poster.original}", binding.header.posterBack)
+                    glide.loadImage(
+                        "https://shikimori.one/${it.data.poster.preview}",
+                        binding.header.poster
+                    )
+                    glide.loadImage(
+                        "https://shikimori.one/${it.data.poster.original}",
+                        binding.header.posterBack
+                    )
                     binding.descriptionLayout.description.text = it.data.description
 
                     if (it.data.userRate != null)
-                        binding.userRateActionButton.text = resources.getString(R.string.edit_in_my_list)
+                        binding.userRateActionButton.text =
+                            resources.getString(R.string.edit_in_my_list)
                     binding.userRate.textInputLayout.suffixText = "/${it.data.episodes}"
-                    binding.userRate.statusSpinner.selectedIndex = when(it.data.userRate?.status) {
+                    binding.userRate.statusSpinner.selectedIndex = when (it.data.userRate?.status) {
                         "planned" -> 3
                         "watching" -> 4
                         "on_hold" -> 2
@@ -142,7 +157,7 @@ class AnimePageFragment : Fragment() {
                     binding.userRate.ratingBar.rating = it.data.userRate?.score?.toFloat()?.div(2)
                         ?: 0f
                     binding.userRate.ratingNum.text =
-                        if(it.data.userRate?.score == 0 || it.data.userRate == null) ""
+                        if (it.data.userRate?.score == 0 || it.data.userRate == null) ""
                         else it.data.userRate?.score.toString()
 
                     if (binding.animeGenres.genresChipGroup.isEmpty()) {
@@ -160,7 +175,8 @@ class AnimePageFragment : Fragment() {
 
         animePageViewModel.getUserRateState().observe(viewLifecycleOwner) {
             when (it) {
-                is State.Pending -> {}
+                is State.Pending -> {
+                }
                 is State.Fail -> {
                     Toast.makeText(activity, it.error.toString(), Toast.LENGTH_SHORT).show()
                 }
@@ -173,12 +189,16 @@ class AnimePageFragment : Fragment() {
 
     private fun onClickListeners() {
         binding.descriptionLayout.moreBtn.setOnClickListener {
-            if (binding.descriptionLayout.description.maxLines == 3) {
-                binding.descriptionLayout.description.maxLines = Integer.MAX_VALUE
-                binding.descriptionLayout.moreBtn.setImageResource(R.drawable.outline_expand_less_24)
+            val moreBtn = it as ImageButton
+            val viewHeight = resources.getDimensionPixelSize(R.dimen.anime_description_height)
+            val descView = binding.descriptionLayout.description
+
+            if (descView.height > viewHeight) {
+                descView.collapse(viewHeight, binding.root)
+                moreBtn.setImageResource(R.drawable.outline_expand_more_24)
             } else {
-                binding.descriptionLayout.description.maxLines = 3
-                binding.descriptionLayout.moreBtn.setImageResource(R.drawable.outline_expand_more_24)
+                descView.expand(binding.root)
+                moreBtn.setImageResource(R.drawable.outline_expand_less_24)
             }
         }
 
@@ -187,7 +207,7 @@ class AnimePageFragment : Fragment() {
         }
 
         binding.userRate.ratingBar.setOnRatingBarChangeListener { ratingBar, fl, b ->
-            binding.userRate.ratingNum.text = (fl*2).toInt().toString()
+            binding.userRate.ratingNum.text = (fl * 2).toInt().toString()
         }
 
         binding.userRateActionButton.setOnClickListener {
@@ -205,24 +225,20 @@ class AnimePageFragment : Fragment() {
                 null
             }
             val userRate = UserRate(
-                userId = (activity as MainActivity).users[0].uid,
-                targetId = aId,
+                userId = 0,
+                targetId = animeId,
                 targetType = "Anime",
-                score = (binding.userRate.ratingBar.rating*2).toInt(),
+                score = (binding.userRate.ratingBar.rating * 2).toInt(),
                 status = userListOptEng[binding.userRate.statusSpinner.selectedIndex],
                 episodes = episodes,
                 id = 0
             )
             val userRates = UserRates(userRate)
-            (activity as MainActivity).users[0].let {
-                it.accessToken?.let { it1 ->
-                    animePageViewModel.postUserRate(it1, userRates)
-                }
-            }
+            animePageViewModel.postUserRate(userRates)
         }
     }
 
-    private fun ChipGroup.addChip(context: Context, label: String, genreId: Int){
+    private fun ChipGroup.addChip(context: Context, label: String, genreId: Int) {
         Chip(context).apply {
             id = View.generateViewId()
             text = label
@@ -231,10 +247,7 @@ class AnimePageFragment : Fragment() {
             isCheckedIconVisible = false
             isFocusable = true
             setOnClickListener {
-                Log.i("TAG", label)
-                val bundle = bundleOf("genre" to genreId)
-                findNavController()
-                    .navigate(R.id.action_animePageFragment_to_mainAnimeListFragment, bundle)
+                animePageViewModel.navigateTo(Screens.mainList(genreId.toString()))
             }
             addView(this)
         }

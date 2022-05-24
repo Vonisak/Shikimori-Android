@@ -19,6 +19,7 @@ import com.example.shikimoriandroid.ui.adapters.UserListAdapter
 import com.example.shikimoriandroid.databinding.FragmentUserListRecyclerBinding
 import com.example.shikimoriandroid.data.model.user.AnimeRates
 import com.example.shikimoriandroid.presentation.viewModels.UserAnimeListViewModel
+import com.example.shikimoriandroid.ui.navigation.Screens
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,8 +58,7 @@ class UserListRecyclerFragment(val position: Int) : Fragment() {
         }
         observeModel()
         binding.userListRecycler.adapter = UserListAdapter(userList) { animeId ->
-            val bundle = bundleOf("amount" to animeId)
-            findNavController().navigate(R.id.action_userListFragment_to_animePageFragment, bundle)
+            userListViewModel.navigateTo(Screens.animePage(animeId))
         }
 
         binding.userListRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {

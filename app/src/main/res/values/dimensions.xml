@@ -2,4 +2,5 @@
 <resources>
     <dimen name="poster_small_width">156dp</dimen>
     <dimen name="poster_small_height">240dp</dimen>
+    <dimen name="anime_description_height">70dp</dimen>
 </resources>

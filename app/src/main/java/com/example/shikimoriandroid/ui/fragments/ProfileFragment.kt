@@ -13,6 +13,7 @@ import com.example.shikimoriandroid.databinding.FragmentProfileBinding
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.presentation.viewModels.ProfileViewModel
+import com.example.shikimoriandroid.ui.navigation.Screens
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,7 +42,7 @@ class ProfileFragment : BaseBottomNavFragment() {
             profileViewModel.getProfileInfo()
         }
         binding.userList.setOnClickListener {
-            navigate(R.id.action_profileFragment_to_userListFragment)
+            profileViewModel.navigateTo(Screens.userList())
         }
     }
 

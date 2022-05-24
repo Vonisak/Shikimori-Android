@@ -22,7 +22,7 @@ class UserAnimeListViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) :
-    ViewModel() {
+    NavigationModel() {
 
     private val _userListState = MutableLiveData<State<List<AnimeRates>>>()
     val userListState: LiveData<State<List<AnimeRates>>> = _userListState

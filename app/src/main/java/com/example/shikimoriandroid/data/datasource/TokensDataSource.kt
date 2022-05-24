@@ -23,7 +23,7 @@ class TokensDataSource @Inject constructor(@ApplicationContext private val conte
 
     fun getAccessToken(): String? =
         context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
-            .getString(APP_PREFERENCES_ACCESS_TOKEN_KEY, "null")
+            .getString(APP_PREFERENCES_ACCESS_TOKEN_KEY, null)
 
 
     fun saveRefreshToken(refreshToken: String) {
@@ -35,7 +35,7 @@ class TokensDataSource @Inject constructor(@ApplicationContext private val conte
 
     fun getRefreshToken(): String? =
         context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
-            .getString(APP_PREFERENCES_REFRESH_TOKEN_KEY, "null")
+            .getString(APP_PREFERENCES_REFRESH_TOKEN_KEY, null)
 
     fun clearSharedPref() {
         context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)

@@ -9,6 +9,7 @@ import com.example.shikimoriandroid.domain.usecases.GetTokensUseCase
 import com.example.shikimoriandroid.domain.usecases.SaveAccessTokenUseCase
 import com.example.shikimoriandroid.domain.usecases.SaveRefreshTokenUseCase
 import com.example.shikimoriandroid.presentation.entity.State
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +22,7 @@ class AuthViewModel @Inject constructor(
     private val getTokensUseCase: GetTokensUseCase,
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
     private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase
-) : ViewModel() {
+) : NavigationModel() {
 
     private val _tokensState = MutableLiveData<State<AuthResponse>>()
     val tokensState: LiveData<State<AuthResponse>> = _tokensState

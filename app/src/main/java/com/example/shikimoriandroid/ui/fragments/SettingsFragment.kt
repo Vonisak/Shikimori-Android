@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.databinding.FragmentSettingsBinding
+import com.example.shikimoriandroid.presentation.viewModels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -15,6 +17,7 @@ class SettingsFragment : BaseBottomNavFragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: SettingsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,11 +26,7 @@ class SettingsFragment : BaseBottomNavFragment() {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         binding.signOutButton.setOnClickListener {
-            //TODO избавься от БД
-            runBlocking(Dispatchers.IO) {
-                (activity as MainActivity).userDao.cleanUsers()
-            }
-            (activity as MainActivity).updateUsersInfo()
+            viewModel.profileExit()
         }
 
         return binding.root

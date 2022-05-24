@@ -9,6 +9,7 @@ import com.example.shikimoriandroid.data.model.user.UserInfo
 import com.example.shikimoriandroid.domain.usecases.GetAccessTokenUseCase
 import com.example.shikimoriandroid.domain.usecases.GetCurrentUserUseCase
 import com.example.shikimoriandroid.domain.usecases.GetUserByIdUseCase
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.lang.NullPointerException
@@ -20,7 +21,7 @@ class ProfileViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) :
-    ViewModel() {
+    NavigationModel() {
 
     private val _userProfileState = MutableLiveData<State<UserInfo>>()
     val userProfileState: LiveData<State<UserInfo>> = _userProfileState

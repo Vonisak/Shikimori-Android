@@ -16,6 +16,7 @@ import com.example.shikimoriandroid.domain.utils.Constants
 import com.example.shikimoriandroid.databinding.FragmentAuthBinding
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.AuthViewModel
+import com.example.shikimoriandroid.ui.navigation.Screens
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
@@ -58,8 +59,7 @@ class AuthFragment : BaseBottomNavFragment() {
                 is State.Pending -> {}
                 is State.Success -> {
                     viewModel.saveTokens(state.data.accessToken, state.data.refreshToken)
-                    navigate(R.id.action_authFragment_to_profileFragment)
-                    findNavController().backQueue.removeLast()
+                    viewModel.replaceScreen(Screens.profile())
                 }
                 is State.Fail -> {
                     Toast.makeText(requireContext(), state.error.toString(), Toast.LENGTH_SHORT).show()
