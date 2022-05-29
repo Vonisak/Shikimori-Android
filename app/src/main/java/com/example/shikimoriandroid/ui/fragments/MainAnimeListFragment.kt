@@ -17,24 +17,28 @@ import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.MainListViewModel
 import com.example.shikimoriandroid.ui.navigation.Screens
-import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainAnimeListFragment(private val genre: String = "") :
     BaseBottomNavFragment(),
     SearchView.OnQueryTextListener,
     MainActivity.ItemReselectedListener,
+    MainActivity.BackListener,
     MainListBottomSheetFilterFragment.OnClickListener{
+
+    companion object {
+
+        const val TITLE = "Список"
+    }
 
     private var _binding: FragmentMainAnimeListBinding? = null
     private val binding get() = _binding!!
-    private val mainListViewModel: MainListViewModel by viewModels()
+    private val viewModel: MainListViewModel by viewModels()
     private var animeList = mutableListOf<AnimeInfo>()
     private val glideAdapter = GlideAdapter(this)
     private val adapter: AnimeListAdapter = AnimeListAdapter(animeList, glideAdapter) { animeId ->
-        mainListViewModel.navigateTo(Screens.animePage(animeId))
+        viewModel.navigateTo(Screens.animePage(animeId))
     }
     private var page = 1
     private val limit = 20
@@ -54,10 +58,10 @@ class MainAnimeListFragment(private val genre: String = "") :
     ): View {
         _binding = FragmentMainAnimeListBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        Log.i("TAG", genre)
+        (activity as MainActivity).supportActionBar?.title = TITLE
 
         if (isCreate) {
-            mainListViewModel.getAnimeList(limit, page, order, searchStr, genre)
+            viewModel.getAnimeList(limit, page, order, searchStr, genre)
             Log.i("TAG", animeList.toString())
             Log.i("TAG", "createView")
             isCreate = false
@@ -66,6 +70,7 @@ class MainAnimeListFragment(private val genre: String = "") :
         recyclerSettings()
         swipeRefreshListener()
         (activity as MainActivity).setItemReselectedListener(this)
+        (activity as MainActivity).setOnBackListener(this)
 
         //sheetBehavior = BottomSheetBehavior.from(binding.bottomSheetFilter.root)
 
@@ -76,7 +81,7 @@ class MainAnimeListFragment(private val genre: String = "") :
         binding.swipeRefresh.setOnRefreshListener {
             page = 1
             animeList.clear()
-            mainListViewModel.getAnimeList(limit, page, order, searchStr, genre)
+            viewModel.getAnimeList(limit, page, order, searchStr, genre)
         }
     }
 
@@ -98,7 +103,7 @@ class MainAnimeListFragment(private val genre: String = "") :
                         if (visibleItemCount + pastVisiblesItems + 4 >= totalItemCount) {
                             loading = false
                             page++
-                            mainListViewModel.getAnimeList(limit, page, order, searchStr, genre)
+                            viewModel.getAnimeList(limit, page, order, searchStr, genre)
                             //Log.i("TAG", "page=$page")
                         }
                     }
@@ -110,7 +115,7 @@ class MainAnimeListFragment(private val genre: String = "") :
     private fun observeModel() {
         Log.i("TAG", "observeModel")
 
-        mainListViewModel.mainAnimeListState.observe(viewLifecycleOwner) {
+        viewModel.mainAnimeListState.observe(viewLifecycleOwner) {
             when (it) {
                 is State.Pending -> {
                     binding.swipeRefresh.isRefreshing = true
@@ -158,7 +163,7 @@ class MainAnimeListFragment(private val genre: String = "") :
         searchStr = query
         page = 1
         animeList.clear()
-        mainListViewModel.getAnimeList(limit, page, order, query)
+        viewModel.getAnimeList(limit, page, order, query)
         return true
     }
 
@@ -178,10 +183,14 @@ class MainAnimeListFragment(private val genre: String = "") :
         searchStr = ""
         page = 1
         animeList.clear()
-        mainListViewModel.getAnimeList(limit, page, order, searchStr)
+        viewModel.getAnimeList(limit, page, order, searchStr)
     }
 
     override fun onClick() {
         Log.i("TAG", "click button")
+    }
+
+    override fun onBack() {
+        (activity as MainActivity).bottomNavChecked(R.id.anime_list_item, true)
     }
 }

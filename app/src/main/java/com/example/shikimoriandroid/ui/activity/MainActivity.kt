@@ -1,23 +1,17 @@
 package com.example.shikimoriandroid.ui.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.shikimoriandroid.DatabaseApplication
 import com.example.shikimoriandroid.R
 import com.example.shikimoriandroid.databinding.ActivityMainBinding
-import com.example.shikimoriandroid.data.datasource.localBd.AuthDao
-import com.example.shikimoriandroid.data.datasource.localBd.AuthInfo
 import com.example.shikimoriandroid.presentation.viewModels.MainViewModel
+import com.example.shikimoriandroid.ui.fragments.MainAnimeListFragment
 import com.example.shikimoriandroid.ui.navigation.Screens
 import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -25,8 +19,8 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-    private val deck = ArrayDeque<Int>()
     private lateinit var reselectedListener: ItemReselectedListener
+    private var onBackListener: BackListener? = null
     private val viewModel: MainViewModel by viewModels()
 
     @Inject
@@ -39,8 +33,7 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setSupportActionBar(binding.mainToolbar.root)
-        supportActionBar?.title = "Список"
-        deck.add(R.id.anime_list_item)
+        supportActionBar?.title = MainAnimeListFragment.TITLE
         setContentView(binding.root)
         navSettings()
 
@@ -49,28 +42,26 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     private fun navSettings() {
         binding.bottomNavigation.setOnItemSelectedListener {
+            viewModel.newRootScreen(Screens.mainList())
             when (it.itemId) {
                 R.id.anime_list_item -> {
-                    supportActionBar?.title = "Список"
-                    viewModel.navigateTo(Screens.mainList())
-                    deck.add(R.id.anime_list_item)
+                    viewModel.backTo(Screens.mainList())
+                    binding.bottomNavigation.menu.findItem(R.id.anime_list_item).isChecked = true
                     true
                 }
                 R.id.anime_profile_item -> {
+                    binding.bottomNavigation.menu.findItem(R.id.anime_profile_item).isChecked = true
                     if (viewModel.isUserAuth()) {
-                        supportActionBar?.title = "Профиль"
                         viewModel.navigateTo(Screens.profile())
                     } else {
-                        supportActionBar?.title = "Авторизация"
                         viewModel.navigateTo(Screens.auth())
                     }
-                    deck.add(R.id.anime_profile_item)
                     true
                 }
                 R.id.anime_settings_item -> {
-                    supportActionBar?.title = "Настройки"
+                    binding.bottomNavigation.menu.findItem(R.id.anime_settings_item).isChecked =
+                        true
                     viewModel.navigateTo(Screens.settings())
-                    deck.add(R.id.anime_settings_item)
                     true
                 }
                 else -> false
@@ -85,7 +76,6 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
     }
 
     // Метод делать видимым/невидимым BottomNavigationBar
-    //TODO добавить анимацию
     fun showBottomNav(visible: Boolean) {
         if (visible) {
             binding.bottomNavigation.visibility = View.VISIBLE
@@ -95,12 +85,12 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (deck.size > 1) {
-            binding.bottomNavigation.menu.findItem(deck.removeLast()).isChecked =
-                false
-            binding.bottomNavigation.menu.findItem(deck.last()).isChecked = true
-        }
-        super.onBackPressed()
+        onBackListener?.onBack()
+        viewModel.back()
+    }
+
+    fun bottomNavChecked(itemId: Int, checked: Boolean) {
+        binding.bottomNavigation.menu.findItem(itemId).isChecked = checked
     }
 
     override fun onDestroy() {
@@ -110,6 +100,14 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     fun setItemReselectedListener(listener: ItemReselectedListener) {
         reselectedListener = listener
+    }
+
+    fun setOnBackListener(listener: BackListener?) {
+        onBackListener = listener
+    }
+
+    interface BackListener {
+        fun onBack()
     }
 
     interface ItemReselectedListener {

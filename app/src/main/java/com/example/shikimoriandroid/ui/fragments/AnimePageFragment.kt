@@ -1,25 +1,16 @@
 package com.example.shikimoriandroid.ui.fragments
 
-import android.animation.ValueAnimator
-import android.app.ActionBar
 import android.content.Context
 import android.os.Bundle
-import android.transition.TransitionManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.translation.TranslationManager
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.core.animation.doOnStart
-import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat.animate
 import androidx.core.view.isEmpty
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.example.shikimoriandroid.domain.utils.AnimeStringSwitcher
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.R

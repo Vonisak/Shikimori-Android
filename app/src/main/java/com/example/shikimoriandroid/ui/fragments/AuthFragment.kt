@@ -1,27 +1,28 @@
 package com.example.shikimoriandroid.ui.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import com.example.shikimoriandroid.R
 import com.example.shikimoriandroid.domain.utils.Constants
 import com.example.shikimoriandroid.databinding.FragmentAuthBinding
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.AuthViewModel
+import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.ui.navigation.Screens
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class AuthFragment : BaseBottomNavFragment() {
+
+    companion object {
+
+        const val TITLE = "Авторизация"
+    }
 
     private var _binding: FragmentAuthBinding? = null
     private val binding get() = _binding!!
@@ -33,7 +34,7 @@ class AuthFragment : BaseBottomNavFragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAuthBinding.inflate(inflater, container, false)
-
+        (activity as MainActivity).supportActionBar?.title = TITLE
         observeModel()
         initListeners()
 
@@ -56,16 +57,17 @@ class AuthFragment : BaseBottomNavFragment() {
     private fun observeModel() {
         viewModel.tokensState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is State.Pending -> {}
+                is State.Pending -> {
+                }
                 is State.Success -> {
                     viewModel.saveTokens(state.data.accessToken, state.data.refreshToken)
                     viewModel.replaceScreen(Screens.profile())
                 }
                 is State.Fail -> {
-                    Toast.makeText(requireContext(), state.error.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), state.error.toString(), Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
     }
-
 }

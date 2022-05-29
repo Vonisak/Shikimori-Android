@@ -18,6 +18,14 @@ open class NavigationModel: ViewModel() {
         router.exit()
     }
 
+    fun newRootScreen(screen: Screen) {
+        router.newRootScreen(screen)
+    }
+
+    fun backTo(screen: Screen) {
+        router.backTo(screen)
+    }
+
     fun replaceScreen(screen: Screen) {
         router.replaceScreen(screen)
     }

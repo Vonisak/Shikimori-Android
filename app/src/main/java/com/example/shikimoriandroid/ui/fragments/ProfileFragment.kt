@@ -7,30 +7,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import com.example.shikimoriandroid.*
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.databinding.FragmentProfileBinding
 import com.example.shikimoriandroid.presentation.entity.State
-import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.presentation.viewModels.ProfileViewModel
+import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.ui.navigation.Screens
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileFragment : BaseBottomNavFragment() {
 
+    companion object {
+
+        const val TITLE = "Профиль"
+    }
+
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val glideAdapter = GlideAdapter(this)
-    private val profileViewModel: ProfileViewModel by viewModels()
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-
-        profileViewModel.getProfileInfo()
+        (activity as MainActivity).supportActionBar?.title = TITLE
+        viewModel.getProfileInfo()
 
         observeModel()
         listeners()
@@ -39,15 +43,15 @@ class ProfileFragment : BaseBottomNavFragment() {
 
     private fun listeners() {
         binding.swipeRefresh.setOnRefreshListener {
-            profileViewModel.getProfileInfo()
+            viewModel.getProfileInfo()
         }
         binding.userList.setOnClickListener {
-            profileViewModel.navigateTo(Screens.userList())
+            viewModel.navigateTo(Screens.userList())
         }
     }
 
     private fun observeModel() {
-        profileViewModel.userProfileState.observe(viewLifecycleOwner) { it ->
+        viewModel.userProfileState.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is State.Pending -> {
                     binding.swipeRefresh.isRefreshing = true
@@ -87,5 +91,4 @@ class ProfileFragment : BaseBottomNavFragment() {
             }
         }
     }
-
 }
