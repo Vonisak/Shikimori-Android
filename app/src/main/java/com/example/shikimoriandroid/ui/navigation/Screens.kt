@@ -1,5 +1,6 @@
 package com.example.shikimoriandroid.ui.navigation
 
+import com.example.shikimoriandroid.data.model.anime.Role
 import com.example.shikimoriandroid.ui.fragments.*
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 
@@ -18,4 +19,12 @@ object Screens {
     fun animePage(animeId: Int) = FragmentScreen { AnimePageFragment(animeId) }
 
     fun userList() = FragmentScreen { UserListFragment() }
+
+    fun personList(persons: List<Role>) = FragmentScreen { PersonListFragment(persons) }
+
+    fun characterList(characters: List<Role>) = FragmentScreen { CharacterListFragment(characters) }
+
+    fun characterInfo(id: Int) = FragmentScreen { CharacterInfoFragment(id) }
+
+    fun personInfo(id: Int) = FragmentScreen { PersonInfoFragment(id) }
 }

@@ -1,6 +1,5 @@
 package com.example.shikimoriandroid.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,63 +9,60 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.view.isEmpty
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shikimoriandroid.domain.utils.AnimeStringSwitcher
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.R
+import com.example.shikimoriandroid.data.model.anime.Stats
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.databinding.FragmentAnimePageBinding
 import com.example.shikimoriandroid.data.model.anime.UserRate
 import com.example.shikimoriandroid.data.model.anime.UserRates
 import com.example.shikimoriandroid.presentation.viewModels.AnimePageViewModel
+import com.example.shikimoriandroid.ui.adapters.CharacterAdapter
+import com.example.shikimoriandroid.ui.adapters.PersonAdapter
 import com.example.shikimoriandroid.ui.navigation.Screens
 import com.example.shikimoriandroid.ui.utils.*
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class AnimePageFragment(private val animeId: Int) : Fragment() {
 
     private var _binding: FragmentAnimePageBinding? = null
     private val binding get() = _binding!!
-    private val animePageViewModel: AnimePageViewModel by viewModels()
+    private val viewModel: AnimePageViewModel by viewModels()
     private val glide = GlideAdapter(this)
-    private lateinit var title: String
-    private val userListOpt = listOf(
-        "Просмотрено",
-        "Брошено",
-        "Отложено",
-        "Запланировано",
-        "Смотрю"
-    )
-    private val userListOptEng = listOf(
-        "completed",
-        "dropped",
-        "on_hold",
-        "planned",
-        "watching"
-    )
+    private lateinit var characterAdapter: CharacterAdapter
+    private lateinit var personAdapter: PersonAdapter
+    private var isCreate = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAnimePageBinding.inflate(inflater, container, false)
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
 
-
-        if (animePageViewModel.isUserAuth()) {
-            binding.userRateActionButton.visibility = View.VISIBLE
-        } else {
-            binding.userRateActionButton.visibility = View.GONE
+        viewModel.checkUserAuth()
+        if (isCreate) {
+            isCreate = false
+            viewModel.getAnime(animeId)
+            viewModel.getRoles(animeId)
         }
 
-        animePageViewModel.getAnime(animeId)
 
-        binding.userRate.statusSpinner.setItems(userListOpt)
+        val userStatuses = resources.getStringArray(R.array.user_anime_statuses).toList()
+        binding.userRate.statusSpinner.setItems(userStatuses)
 
+        initCharacterRecycler()
+        initPersonRecycler()
         observeModel()
         onClickListeners()
         return binding.root
@@ -74,15 +70,11 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (activity is MainActivity) {
-            (activity as MainActivity).showBottomNav(false)
-            title = (activity as MainActivity).supportActionBar?.title as String
-        }
+        (activity as MainActivity).showBottomNav(false)
     }
 
     private fun observeModel() {
-        animePageViewModel.animeInfoState.observe(viewLifecycleOwner) { it ->
+        viewModel.animeInfoState.observe(viewLifecycleOwner) { it ->
             when (it) {
                 is State.Pending -> {
                     //binding.swipeRefresh.isRefreshing = true
@@ -92,9 +84,10 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                     Toast.makeText(requireContext(), "Fail: ${it.error}", Toast.LENGTH_SHORT).show()
                 }
                 is State.Success -> {
-                    Log.i("TAG", it.data.toString())
-                    (activity as MainActivity).supportActionBar?.title = ""
+                    //Log.i("TAG", it.data.toString())
+                    (activity as MainActivity).supportActionBar?.title = it.data.nameEng
                     val switcher = AnimeStringSwitcher()
+                    Log.i("TAG", it.data.ratesStats.toString())
                     when (it.data.status) {
                         "ongoing" -> {
                             binding.animeBasicInfo.episodes.visibility = View.GONE
@@ -155,16 +148,35 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                         it.data.genres.forEach {
                             binding.animeGenres.genresChipGroup.addChip(
                                 requireContext(),
-                                it.nameRus,
-                                it.id
-                            )
+                                it.nameRus
+                            ) {
+                                viewModel.navigateTo(Screens.mainList(it.id.toString()))
+                            }
                         }
                     }
+                    binding.animeBasicInfo.headline.title.text =
+                        getString(R.string.main_info_headline_title)
+                    binding.descriptionLayout.headline.title.text =
+                        getString(R.string.description_headline_title)
+                    binding.animeGlobalRating.headline.title.text =
+                        getString(R.string.global_rating_headline_title)
+                    setGlobalRating(it.data.score)
+
+                    binding.characters.headline.title.text =
+                        getString(R.string.main_characters_headline_title)
+                    binding.persons.headline.title.text = getString(R.string.authors_headline_title)
+                    binding.usersScores.headline.title.text =
+                        getString(R.string.users_rates_headline_title)
+                    binding.usersStatuses.headline.title.text =
+                        getString(R.string.users_statuses_headline_title)
+
+                    setUsersScores(it.data.ratesStats)
+                    setUsersStatuses(it.data.statusesStats)
                 }
             }
         }
 
-        animePageViewModel.getUserRateState().observe(viewLifecycleOwner) {
+        viewModel.postUserRateState.observe(viewLifecycleOwner) {
             when (it) {
                 is State.Pending -> {
                 }
@@ -176,6 +188,60 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                 }
             }
         }
+
+        viewModel.userAuth.observe(viewLifecycleOwner) { auth ->
+            if (auth) {
+                binding.userRateActionButton.visibility = View.VISIBLE
+            } else {
+                binding.userRateActionButton.visibility = View.GONE
+            }
+        }
+
+        viewModel.rolesState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is State.Pending -> {
+                }
+                is State.Success -> {
+                    binding.characters.headline.link.isVisible = true
+                    binding.persons.headline.link.isVisible = true
+
+                    val characters = state.data.filter { it.characterPreview != null }
+                    Log.i("TAG", "characters size: ${characters.size}")
+                    val persons = state.data.filter { it.personPreview != null }
+
+                    val personFilterList =
+                        resources.getStringArray(R.array.anime_page_person_filter).toList()
+                    val characterFilterList =
+                        resources.getStringArray(R.array.anime_page_character_filter).toList()
+                    val personsFiltered =
+                        persons.filter { it.rolesRus.roleFilter(personFilterList) }
+                    val charactersFiltered =
+                        characters.filter { it.rolesRus.roleFilter(characterFilterList) }
+
+                    val charactersList = charactersFiltered.map { it.characterPreview!! }
+
+                    personAdapter.roles = personsFiltered
+                    characterAdapter.characters = charactersList
+
+                    binding.persons.headline.root.setOnClickListener {
+                        viewModel.navigateTo(Screens.personList(persons))
+                    }
+                    binding.characters.headline.root.setOnClickListener {
+                        viewModel.navigateTo(Screens.characterList(characters))
+                    }
+                }
+                is State.Fail -> {
+                }
+            }
+        }
+    }
+
+    private fun setGlobalRating(rating: String) {
+        val ratingNotices = resources.getStringArray(R.array.rating_notice_array)
+        val ratingNotice = ratingNotices[rating.toFloat().toInt() - 1]
+        binding.animeGlobalRating.ratingNotice.text = ratingNotice
+        binding.animeGlobalRating.ratingText.text = rating
+        binding.animeGlobalRating.globalRatingBar.progress = rating.toFloat().roundToInt()
     }
 
     private fun onClickListeners() {
@@ -193,11 +259,11 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
             }
         }
 
-        binding.userRate.statusSpinner.setOnItemSelectedListener { view, position, id, item ->
+        binding.userRate.statusSpinner.setOnItemSelectedListener { _, _, _, item ->
             Toast.makeText(requireContext(), item.toString(), Toast.LENGTH_SHORT).show()
         }
 
-        binding.userRate.ratingBar.setOnRatingBarChangeListener { ratingBar, fl, b ->
+        binding.userRate.ratingBar.setOnRatingBarChangeListener { _, fl, _ ->
             binding.userRate.ratingNum.text = (fl * 2).toInt().toString()
         }
 
@@ -215,40 +281,72 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
             } catch (e: Exception) {
                 null
             }
+
+            val userStatusesJson =
+                resources.getStringArray(R.array.user_anime_statuses_json).toList()
+
             val userRate = UserRate(
                 userId = 0,
                 targetId = animeId,
                 targetType = "Anime",
                 score = (binding.userRate.ratingBar.rating * 2).toInt(),
-                status = userListOptEng[binding.userRate.statusSpinner.selectedIndex],
+                status = userStatusesJson[binding.userRate.statusSpinner.selectedIndex],
                 episodes = episodes,
                 id = 0
             )
             val userRates = UserRates(userRate)
-            animePageViewModel.postUserRate(userRates)
+            viewModel.postUserRate(userRates)
         }
     }
 
-    private fun ChipGroup.addChip(context: Context, label: String, genreId: Int) {
-        Chip(context).apply {
-            id = View.generateViewId()
-            text = label
-            isClickable = true
-            isCheckable = true
-            isCheckedIconVisible = false
-            isFocusable = true
-            setOnClickListener {
-                animePageViewModel.navigateTo(Screens.mainList(genreId.toString()))
-            }
-            addView(this)
+    private fun initPersonRecycler() {
+        val layoutManager = LinearLayoutManager(requireContext())
+        personAdapter = PersonAdapter(glide) { personId ->
+            viewModel.navigateTo(Screens.personInfo(personId))
+        }
+        binding.persons.recycler.layoutManager = layoutManager
+        binding.persons.recycler.adapter = personAdapter
+    }
+
+    private fun initCharacterRecycler() {
+        val layoutManager = GridLayoutManager(context, 3)
+        characterAdapter = CharacterAdapter(glide) { characterId ->
+            viewModel.navigateTo(Screens.characterInfo(characterId))
+        }
+        binding.characters.recycler.layoutManager = layoutManager
+        binding.characters.recycler.adapter = characterAdapter
+    }
+
+    private fun setUsersScores(scores: List<Stats>) {
+        val maxScore = scores.maxOf { it.value }
+        val maxWidth = resources.getDimensionPixelSize(R.dimen.gist_max_width_scores)
+        scores.forEach {
+            binding.usersScores.gistContainer.addViewWithLayout(
+                it,
+                requireContext(),
+                maxScore,
+                maxWidth
+            )
+        }
+    }
+
+    private fun setUsersStatuses(statuses: List<Stats>) {
+        val maxStatus = statuses.maxOf { it.value }
+        val maxWidth = resources.getDimensionPixelSize(R.dimen.gist_max_width_statuses)
+        statuses.forEach {
+            binding.usersStatuses.gistContainer.addViewWithLayout(
+                it,
+                requireContext(),
+                maxStatus,
+                maxWidth
+            )
         }
     }
 
     override fun onDestroy() {
-        if (activity is MainActivity) {
-            (activity as MainActivity).showBottomNav(true)
-            (activity as MainActivity).supportActionBar?.title = title
-        }
+        (activity as MainActivity).showBottomNav(true)
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
         _binding = null
         super.onDestroy()
     }

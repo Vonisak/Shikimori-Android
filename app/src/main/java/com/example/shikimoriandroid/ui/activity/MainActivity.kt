@@ -37,6 +37,8 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
         setContentView(binding.root)
         navSettings()
 
+        binding.mainToolbar.root.setNavigationOnClickListener { viewModel.back() }
+
         navigatorHolder.setNavigator(navigator)
     }
 

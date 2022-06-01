@@ -52,6 +52,11 @@ class MainAnimeListFragment(private val genre: String = "") :
     //private lateinit var sheetBehavior: BottomSheetBehavior<View>
     private val modalBottomSheet = MainListBottomSheetFilterFragment()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        (activity as MainActivity).setOnBackListener(this)
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,7 +75,7 @@ class MainAnimeListFragment(private val genre: String = "") :
         recyclerSettings()
         swipeRefreshListener()
         (activity as MainActivity).setItemReselectedListener(this)
-        (activity as MainActivity).setOnBackListener(this)
+
 
         //sheetBehavior = BottomSheetBehavior.from(binding.bottomSheetFilter.root)
 
@@ -175,6 +180,7 @@ class MainAnimeListFragment(private val genre: String = "") :
         Log.i("TAG", "destroy")
         isCreate = true
         _binding = null
+        (activity as MainActivity).setOnBackListener(null)
         super.onDestroy()
     }
 

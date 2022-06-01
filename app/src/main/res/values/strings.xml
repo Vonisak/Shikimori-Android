@@ -32,4 +32,59 @@
     <string name="save">Сохранить</string>
     <string name="add_in_my_list">Добавить в список</string>
     <string name="edit_in_my_list">Изменить в списке</string>
+    <string name="description_headline_title">Описание</string>
+    <string name="main_info_headline_title">Информация</string>
+    <string name="global_rating_headline_title">Рейтинг</string>
+    <string name="authors_headline_title">Авторы</string>
+    <string name="main_characters_headline_title">Главные герои</string>
+    <string name="support_characters_headline_title">Второстепенные герои</string>
+    <string name="person_roles_headline_title">Роли в аниме</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="character_rus_name_prefix">По-русски:</string>
+    <string name="character_jap_name_prefix">По-японски:</string>
+    <string name="character_alter_names_prefix">Прочие:</string>
+    <string name="character_names_headline_title">Имена</string>
+    <string name="users_rates_headline_title">Оценки людей</string>
+    <string name="users_statuses_headline_title">В списках у людей</string>
+    <string name="person_eng_name_prefix">По-английски:</string>
+    <string name="person_birth_date_prefix">Дата рождения:</string>
+    <string name="person_job_prefix">Работа:</string>
+
+    <string-array name="rating_notice_array">
+        <item>Хуже некуда</item>
+        <item>Ужасно</item>
+        <item>Очень плохо</item>
+        <item>Плохо</item>
+        <item>Более-менее</item>
+        <item>Нормально</item>
+        <item>Хорошо</item>
+        <item>Отлично</item>
+        <item>Великолепно</item>
+        <item>Эпик вин!</item>
+    </string-array>
+
+    <string-array name="user_anime_statuses">
+        <item>Просмотрено</item>
+        <item>Брошено</item>
+        <item>Отложено</item>
+        <item>Запланировано</item>
+        <item>Смотрю</item>
+    </string-array>
+
+    <string-array name="user_anime_statuses_json">
+        <item>completed</item>
+        <item>dropped</item>
+        <item>on_hold</item>
+        <item>planned</item>
+        <item>watching</item>
+    </string-array>
+
+    <string-array name="anime_page_person_filter">
+        <item>Автор оригинала</item>
+        <item>Режиссёр</item>
+    </string-array>
+
+    <string-array name="anime_page_character_filter">
+        <item>Main</item>
+    </string-array>
 </resources>

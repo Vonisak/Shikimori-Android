@@ -3,9 +3,11 @@ package com.example.shikimoriandroid.presentation.viewModels
 import androidx.lifecycle.ViewModel
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-open class NavigationModel: ViewModel() {
+@HiltViewModel
+open class NavigationModel @Inject constructor(): ViewModel() {
 
     @Inject
     lateinit var router: Router

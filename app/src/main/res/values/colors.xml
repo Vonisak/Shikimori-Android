@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="headline_background">#E8EBEF</color>
+    <color name="headline_border">#D8DDE4</color>
+    <color name="top_bar_background">#343434</color>
+    <color name="status_bar_color">#2A2A2A</color>
+    <color name="rating_bar_stars_color">#4C86C8</color>
+    <color name="link_color">#176093</color>
+    <color name="gist_item_color">#79A9CF</color>
 </resources>

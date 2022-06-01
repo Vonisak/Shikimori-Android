@@ -18,4 +18,15 @@
         <item name="android:singleLine">true</item>
     </style>
 
+    <style name="Bottom_Navigation" parent="@style/Widget.Design.BottomNavigationView">
+<!--        <item name="android:background">@color/top_bar_background</item>-->
+<!--        <item name="itemTextColor">@color/white</item>-->
+    </style>
+
+    <style name="Headline_text_style">
+        <item name="textAllCaps">true</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

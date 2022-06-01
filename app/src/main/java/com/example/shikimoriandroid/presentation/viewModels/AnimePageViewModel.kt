@@ -2,14 +2,11 @@ package com.example.shikimoriandroid.presentation.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.data.model.anime.AnimeInfo
+import com.example.shikimoriandroid.data.model.anime.Role
 import com.example.shikimoriandroid.data.model.anime.UserRates
-import com.example.shikimoriandroid.domain.usecases.CreateRateUseCase
-import com.example.shikimoriandroid.domain.usecases.GetAccessTokenUseCase
-import com.example.shikimoriandroid.domain.usecases.GetAnimeUseCase
-import com.example.shikimoriandroid.domain.usecases.GetCurrentUserUseCase
+import com.example.shikimoriandroid.domain.usecases.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -22,20 +19,25 @@ class AnimePageViewModel @Inject constructor(
     private val getAnimeUseCase: GetAnimeUseCase,
     private val createRateUseCase: CreateRateUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val GetRolesUseCase: GetRolesUseCase
 ) : NavigationModel() {
-
 
     private val _animeInfoState = MutableLiveData<State<AnimeInfo>>()
     val animeInfoState: LiveData<State<AnimeInfo>> = _animeInfoState
 
-    private val postUserRateState = MutableLiveData<State<String>>()
+    private val _postUserRateState = MutableLiveData<State<String>>()
+    val postUserRateState: LiveData<State<String>> = _postUserRateState
+
+    private val _userAuth = MutableLiveData<Boolean>()
+    val userAuth: LiveData<Boolean> = _userAuth
+
+    private val _rolesState = MutableLiveData<State<List<Role>>>()
+    val rolesState: LiveData<State<List<Role>>> = _rolesState
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         handleError(throwable)
     }
-
-    fun getUserRateState(): LiveData<State<String>> = postUserRateState
 
     fun getAnime(id: Int) {
         _animeInfoState.postValue(State.Pending())
@@ -57,7 +59,7 @@ class AnimePageViewModel @Inject constructor(
 
     //TODO Подумай как сделать лучше
     fun postUserRate(userRates: UserRates) {
-        postUserRateState.postValue(State.Pending())
+        _postUserRateState.postValue(State.Pending())
         var accessToken = getAccessTokenUseCase()
 
         CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
@@ -71,9 +73,18 @@ class AnimePageViewModel @Inject constructor(
         }
     }
 
+    fun getRoles(animeId: Int) {
+        _rolesState.value = State.Pending()
+        CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            _rolesState.postValue(State.Success(GetRolesUseCase(animeId)))
+        }
+    }
+
     private fun handleError(error: Throwable) {
         _animeInfoState.postValue(State.Fail(error))
     }
 
-    fun isUserAuth(): Boolean = getAccessTokenUseCase() != null
+    fun checkUserAuth() {
+        _userAuth.value = getAccessTokenUseCase() != null
+    }
 }

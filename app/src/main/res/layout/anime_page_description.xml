@@ -6,13 +6,20 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <include
+        android:id="@+id/headline"
+        layout="@layout/headline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="@dimen/anime_description_height"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headline"
+        app:layout_constraintStart_toStartOf="@id/headline"
+        app:layout_constraintEnd_toEndOf="@id/headline"
         android:layout_marginHorizontal="8dp"
         tools:text="text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text"/>
 

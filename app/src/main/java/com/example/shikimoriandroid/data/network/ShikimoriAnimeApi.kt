@@ -2,6 +2,9 @@ package com.example.shikimoriandroid.data.network
 
 import com.example.shikimoriandroid.domain.utils.Constants
 import com.example.shikimoriandroid.data.model.anime.AnimeInfo
+import com.example.shikimoriandroid.data.model.anime.CharacterInfo
+import com.example.shikimoriandroid.data.model.anime.PersonInfo
+import com.example.shikimoriandroid.data.model.anime.Role
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -21,4 +24,19 @@ interface ShikimoriAnimeApi {
         @Header("Authorization") accessToken: String,
         @Path("id") id: Int
     ): AnimeInfo
+
+    @GET("api/animes/{id}/roles")
+    suspend fun getRoles(
+        @Path("id") id: Int
+    ): List<Role>
+
+    @GET("api/characters/{id}")
+    suspend fun getCharacter(
+        @Path("id") id: Int
+    ): CharacterInfo
+
+    @GET("api/people/{id}")
+    suspend fun getPerson(
+        @Path("id") id: Int
+    ): PersonInfo
 }
