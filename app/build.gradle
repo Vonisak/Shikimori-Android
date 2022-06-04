@@ -88,4 +88,7 @@ dependencies {
 
     //Cicerone
     implementation('com.github.terrakok:cicerone:7.1')
+
+    //ImageViewer
+    implementation 'com.github.stfalcon-studio:StfalconImageViewer:v1.0.1'
 }

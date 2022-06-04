@@ -9,13 +9,18 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.animation.doOnEnd
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import com.example.shikimoriandroid.R
+import com.example.shikimoriandroid.data.model.anime.Screenshot
 import com.example.shikimoriandroid.data.model.anime.Stats
 import com.example.shikimoriandroid.databinding.AnimePageGistItemBinding
+import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.stfalcon.imageviewer.StfalconImageViewer
 
 fun Number.toPx() = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP,
@@ -92,10 +97,24 @@ fun View.expand(to: Int, onEnd: () -> Unit) {
     ValueAnimator.ofInt(0, to).apply {
         duration = 1000L
         addUpdateListener {
-            Log.i("TAG", "animatedValue = $animatedValue")
             this@expand.updateLayoutParams { width = (animatedValue as Int) }
         }
         this.doOnEnd { onEnd() }
         start()
     }
+}
+
+fun ImageView.openImageViewer(fragment: Fragment, screenshots: List<Screenshot>, position: Int) {
+    val glide = GlideAdapter(fragment)
+    StfalconImageViewer.Builder(
+        fragment.requireContext(),
+        screenshots
+    ) { imageView, screenshot ->
+        glide.loadImage(
+            "https://shikimori.one/${screenshot.original}",
+            imageView
+        )
+    }.withStartPosition(position)
+        .withTransitionFrom(this)
+        .show()
 }

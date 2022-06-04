@@ -29,4 +29,8 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="TextInputEditText" parent="ThemeOverlay.Material3.TextInputEditText">
+        <item name="colorControlActivated">@color/rating_bar_stars_color</item>
+    </style>
+
 </resources>

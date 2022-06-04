@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isEmpty
 import androidx.core.view.isVisible
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shikimoriandroid.domain.utils.AnimeStringSwitcher
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.R
+import com.example.shikimoriandroid.data.model.anime.Screenshot
 import com.example.shikimoriandroid.data.model.anime.Stats
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
@@ -57,10 +59,10 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
             viewModel.getRoles(animeId)
         }
 
-
         val userStatuses = resources.getStringArray(R.array.user_anime_statuses).toList()
         binding.userRate.statusSpinner.setItems(userStatuses)
 
+        setHeadLines()
         initCharacterRecycler()
         initPersonRecycler()
         observeModel()
@@ -124,7 +126,6 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                         "https://shikimori.one/${it.data.poster.original}",
                         binding.header.posterBack
                     )
-                    binding.descriptionLayout.description.text = it.data.description
 
                     if (it.data.userRate != null)
                         binding.userRateActionButton.text =
@@ -138,11 +139,20 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                         "dropped" -> 1
                         else -> 3
                     }
-                    binding.userRate.ratingBar.rating = it.data.userRate?.score?.toFloat()?.div(2)
-                        ?: 0f
-                    binding.userRate.ratingNum.text =
+                    binding.userRate.userRating.ratingBar.rating =
+                        it.data.userRate?.score?.toFloat()?.div(2)
+                            ?: 0f
+                    binding.userRate.userRating.ratingText.text =
                         if (it.data.userRate?.score == 0 || it.data.userRate == null) ""
                         else it.data.userRate?.score.toString()
+
+                    val userRate = it.data.userRate
+                    if (userRate != null && userRate.score != 0) {
+                        setRatingNotice(
+                            userRate.score.toFloat(),
+                            binding.userRate.userRating.ratingNotice
+                        )
+                    }
 
                     if (binding.animeGenres.genresChipGroup.isEmpty()) {
                         it.data.genres.forEach {
@@ -154,24 +164,11 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                             }
                         }
                     }
-                    binding.animeBasicInfo.headline.title.text =
-                        getString(R.string.main_info_headline_title)
-                    binding.descriptionLayout.headline.title.text =
-                        getString(R.string.description_headline_title)
-                    binding.animeGlobalRating.headline.title.text =
-                        getString(R.string.global_rating_headline_title)
                     setGlobalRating(it.data.score)
-
-                    binding.characters.headline.title.text =
-                        getString(R.string.main_characters_headline_title)
-                    binding.persons.headline.title.text = getString(R.string.authors_headline_title)
-                    binding.usersScores.headline.title.text =
-                        getString(R.string.users_rates_headline_title)
-                    binding.usersStatuses.headline.title.text =
-                        getString(R.string.users_statuses_headline_title)
-
                     setUsersScores(it.data.ratesStats)
                     setUsersStatuses(it.data.statusesStats)
+                    setDescription(it.data.description)
+                    setScreenshots(it.data.screenshots)
                 }
             }
         }
@@ -202,11 +199,8 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                 is State.Pending -> {
                 }
                 is State.Success -> {
-                    binding.characters.headline.link.isVisible = true
-                    binding.persons.headline.link.isVisible = true
 
                     val characters = state.data.filter { it.characterPreview != null }
-                    Log.i("TAG", "characters size: ${characters.size}")
                     val persons = state.data.filter { it.personPreview != null }
 
                     val personFilterList =
@@ -236,12 +230,45 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         }
     }
 
+    private fun setScreenshots(screenshots: List<Screenshot>) {
+        if (screenshots.isEmpty()) {
+            binding.screenshots.root.isVisible = false
+        } else {
+            glide.loadImage(
+                "https://shikimori.one/${screenshots[0].preview}",
+                binding.screenshots.screenshot1.screenshot
+            )
+            glide.loadImage(
+                "https://shikimori.one/${screenshots[1].preview}",
+                binding.screenshots.screenshot2.screenshot
+            )
+            binding.screenshots.screenshot1.root.setOnClickListener {
+                binding.screenshots.screenshot1.screenshot.openImageViewer(this, screenshots, 0)
+            }
+            binding.screenshots.screenshot2.root.setOnClickListener {
+                binding.screenshots.screenshot2.screenshot.openImageViewer(this, screenshots, 1)
+            }
+
+        }
+    }
+
+    private fun setDescription(description: String?) {
+        if (description == null) {
+            binding.descriptionLayout.root.isVisible = false
+        } else {
+            binding.descriptionLayout.description.text = description
+        }
+    }
+
     private fun setGlobalRating(rating: String) {
-        val ratingNotices = resources.getStringArray(R.array.rating_notice_array)
-        val ratingNotice = ratingNotices[rating.toFloat().toInt() - 1]
-        binding.animeGlobalRating.ratingNotice.text = ratingNotice
-        binding.animeGlobalRating.ratingText.text = rating
-        binding.animeGlobalRating.globalRatingBar.progress = rating.toFloat().roundToInt()
+        if (rating == "0.0") {
+            binding.animeGlobalRating.root.isVisible = false
+            return
+        }
+        binding.animeGlobalRating.globalRating.ratingBar.setIsIndicator(true)
+        setRatingNotice(rating.toFloat(), binding.animeGlobalRating.globalRating.ratingNotice)
+        binding.animeGlobalRating.globalRating.ratingText.text = rating
+        binding.animeGlobalRating.globalRating.ratingBar.progress = rating.toFloat().roundToInt()
     }
 
     private fun onClickListeners() {
@@ -263,17 +290,24 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
             Toast.makeText(requireContext(), item.toString(), Toast.LENGTH_SHORT).show()
         }
 
-        binding.userRate.ratingBar.setOnRatingBarChangeListener { _, fl, _ ->
-            binding.userRate.ratingNum.text = (fl * 2).toInt().toString()
+        binding.userRate.userRating.ratingBar.setOnRatingBarChangeListener { _, fl, _ ->
+            if (fl != 0F) {
+                setRatingNotice(fl * 2, binding.userRate.userRating.ratingNotice)
+            }
+            binding.userRate.userRating.ratingText.text = (fl * 2).toInt().toString()
+        }
+
+        binding.screenshots.headline.root.setOnClickListener {
+            viewModel.navigateTo(Screens.screenshots(animeId))
         }
 
         binding.userRateActionButton.setOnClickListener {
             binding.userRateActionButton.visibility = View.GONE
-            binding.userRate.root.visibility = View.VISIBLE
+            binding.userRate.root.expand(binding.root)
         }
 
         binding.userRate.saveButton.setOnClickListener {
-            binding.userRate.root.visibility = View.GONE
+            binding.userRate.root.collapse(0, binding.root)
             binding.userRateActionButton.visibility = View.VISIBLE
 
             val episodes = try {
@@ -289,7 +323,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                 userId = 0,
                 targetId = animeId,
                 targetType = "Anime",
-                score = (binding.userRate.ratingBar.rating * 2).toInt(),
+                score = (binding.userRate.userRating.ratingBar.rating * 2).toInt(),
                 status = userStatusesJson[binding.userRate.statusSpinner.selectedIndex],
                 episodes = episodes,
                 id = 0
@@ -297,6 +331,32 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
             val userRates = UserRates(userRate)
             viewModel.postUserRate(userRates)
         }
+    }
+
+    private fun setRatingNotice(rating: Float, textView: TextView) {
+        val ratingNotices = resources.getStringArray(R.array.rating_notice_array)
+        val ratingNotice = ratingNotices[rating.toInt() - 1]
+        textView.text = ratingNotice
+    }
+
+    private fun setHeadLines() {
+        binding.characters.headline.link.isVisible = true
+        binding.persons.headline.link.isVisible = true
+        binding.screenshots.headline.link.isVisible = true
+        binding.characters.headline.title.text =
+            getString(R.string.main_characters_headline_title)
+        binding.persons.headline.title.text = getString(R.string.authors_headline_title)
+        binding.usersScores.headline.title.text =
+            getString(R.string.users_rates_headline_title)
+        binding.usersStatuses.headline.title.text =
+            getString(R.string.users_statuses_headline_title)
+        binding.animeBasicInfo.headline.title.text =
+            getString(R.string.main_info_headline_title)
+        binding.descriptionLayout.headline.title.text =
+            getString(R.string.description_headline_title)
+        binding.animeGlobalRating.headline.title.text =
+            getString(R.string.global_rating_headline_title)
+        binding.screenshots.headline.title.text = getString(R.string.screenshots_headline_title)
     }
 
     private fun initPersonRecycler() {

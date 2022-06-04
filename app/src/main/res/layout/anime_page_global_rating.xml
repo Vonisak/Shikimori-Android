@@ -1,62 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/headline"
-        layout="@layout/headline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        layout="@layout/headline" />
 
-    <RatingBar
-        android:id="@+id/global_rating_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:isIndicator="true"
-        android:max="10"
-        android:secondaryProgressTint="@color/rating_bar_stars_color"
-        android:progressTint="@color/rating_bar_stars_color"
-        app:layout_constraintEnd_toStartOf="@id/rating_text_info"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="@id/headline"
-        app:layout_constraintTop_toBottomOf="@id/headline"
-        tools:progress="9" />
+    <include
+        android:id="@+id/global_rating"
+        layout="@layout/rating_bar" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/rating_text_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/global_rating_bar"
-        app:layout_constraintEnd_toEndOf="@id/headline"
-        app:layout_constraintStart_toEndOf="@id/global_rating_bar"
-        app:layout_constraintTop_toTopOf="@id/global_rating_bar">
-
-        <TextView
-            android:id="@+id/rating_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="@id/global_rating_bar"
-            app:layout_constraintEnd_toEndOf="@id/headline"
-            app:layout_constraintStart_toEndOf="@id/global_rating_bar"
-            app:layout_constraintTop_toTopOf="@id/global_rating_bar"
-            tools:text="8.75" />
-
-        <TextView
-            android:id="@+id/rating_notice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@id/rating_text"
-            app:layout_constraintStart_toStartOf="@id/rating_text"
-            app:layout_constraintTop_toBottomOf="@id/rating_text"
-            tools:text="Отлично" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

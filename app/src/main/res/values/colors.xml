@@ -15,4 +15,5 @@
     <color name="rating_bar_stars_color">#4C86C8</color>
     <color name="link_color">#176093</color>
     <color name="gist_item_color">#79A9CF</color>
+    <color name="button_background_color">#EEEEF1</color>
 </resources>

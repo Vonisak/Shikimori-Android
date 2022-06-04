@@ -46,6 +46,7 @@
     <string name="character_names_headline_title">Имена</string>
     <string name="users_rates_headline_title">Оценки людей</string>
     <string name="users_statuses_headline_title">В списках у людей</string>
+    <string name="screenshots_headline_title">Кадры</string>
     <string name="person_eng_name_prefix">По-английски:</string>
     <string name="person_birth_date_prefix">Дата рождения:</string>
     <string name="person_job_prefix">Работа:</string>

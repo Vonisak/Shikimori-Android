@@ -1,9 +1,6 @@
 package com.example.shikimoriandroid.data.datasource
 
-import com.example.shikimoriandroid.data.model.anime.AnimeInfo
-import com.example.shikimoriandroid.data.model.anime.CharacterInfo
-import com.example.shikimoriandroid.data.model.anime.PersonInfo
-import com.example.shikimoriandroid.data.model.anime.Role
+import com.example.shikimoriandroid.data.model.anime.*
 import com.example.shikimoriandroid.data.network.ShikimoriAnimeApi
 import javax.inject.Inject
 
@@ -39,4 +36,6 @@ class AnimeDataSource @Inject constructor(private val api: ShikimoriAnimeApi) {
     suspend fun getCharacter(id: Int): CharacterInfo = api.getCharacter(id)
 
     suspend fun getPerson(id: Int): PersonInfo = api.getPerson(id)
+
+    suspend fun getScreenshots(id: Int): List<Screenshot> = api.getScreenshots(id)
 }

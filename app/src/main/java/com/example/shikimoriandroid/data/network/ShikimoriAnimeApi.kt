@@ -1,10 +1,7 @@
 package com.example.shikimoriandroid.data.network
 
+import com.example.shikimoriandroid.data.model.anime.*
 import com.example.shikimoriandroid.domain.utils.Constants
-import com.example.shikimoriandroid.data.model.anime.AnimeInfo
-import com.example.shikimoriandroid.data.model.anime.CharacterInfo
-import com.example.shikimoriandroid.data.model.anime.PersonInfo
-import com.example.shikimoriandroid.data.model.anime.Role
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -39,4 +36,9 @@ interface ShikimoriAnimeApi {
     suspend fun getPerson(
         @Path("id") id: Int
     ): PersonInfo
+
+    @GET("api/animes/{id}/screenshots")
+    suspend fun getScreenshots(
+        @Path("id") id: Int
+    ): List<Screenshot>
 }

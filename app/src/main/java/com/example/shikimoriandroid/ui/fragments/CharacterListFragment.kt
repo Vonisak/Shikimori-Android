@@ -29,19 +29,13 @@ class CharacterListFragment(private val characters: List<Role>) : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: NavigationModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
-        (activity as MainActivity).supportActionBar?.title = TITLE
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
+
+        (activity as MainActivity).supportActionBar?.title = TITLE
 
         initCharactersRecycler()
 
