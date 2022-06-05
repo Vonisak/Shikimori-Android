@@ -93,7 +93,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                     Log.i("TAG", it.data.ratesStats.toString())
                     when (it.data.status) {
                         "ongoing" -> {
-                            binding.animeBasicInfo.episodes.visibility = View.GONE
+                            binding.animeBasicInfo.episodes.hide()
                             binding.animeBasicInfo.animePageEpisodesAired.text =
                                 it.data.episodesAired
                             binding.animeBasicInfo.animePageEpisodesTotal.text = it.data.episodes
@@ -101,15 +101,15 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                                 resources.getString(R.string.anime_status_ongoing)
                         }
                         "released" -> {
-                            binding.animeBasicInfo.episodesAired.visibility = View.GONE
+                            binding.animeBasicInfo.episodesAired.hide()
                             binding.animeBasicInfo.animePageEpisodes.text = it.data.episodes
                             binding.animeBasicInfo.status.text =
                                 resources.getString(R.string.anime_status_released)
                         }
                         "anons" -> {
-                            binding.animeBasicInfo.episodes.visibility = View.GONE
-                            binding.animeBasicInfo.episodesAired.visibility = View.GONE
-                            binding.animeBasicInfo.animePageDuration.visibility = View.GONE
+                            binding.animeBasicInfo.episodes.hide()
+                            binding.animeBasicInfo.episodesAired.hide()
+                            binding.animeBasicInfo.animePageDuration.hide()
                             binding.animeBasicInfo.status.text =
                                 resources.getString(R.string.anime_status_anons)
                         }
@@ -179,19 +179,19 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                 is State.Pending -> {
                 }
                 is State.Fail -> {
-                    Toast.makeText(activity, it.error.toString(), Toast.LENGTH_SHORT).show()
+                    this.toastShort(it.error.toString())
                 }
                 is State.Success -> {
-                    this.toastLong(getString(R.string.success_post))
+                    this.toastShort(getString(R.string.success_post))
                 }
             }
         }
 
         viewModel.userAuth.observe(viewLifecycleOwner) { auth ->
             if (auth) {
-                binding.userRateActionButton.visibility = View.VISIBLE
+                binding.userRateActionButton.show()
             } else {
-                binding.userRateActionButton.visibility = View.GONE
+                binding.userRateActionButton.hide()
             }
         }
 
@@ -245,7 +245,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
 
     private fun setScreenshots(screenshots: List<Screenshot>) {
         if (screenshots.isEmpty()) {
-            binding.screenshots.root.isVisible = false
+            binding.screenshots.root.hide()
         } else {
             glide.loadImage(
                 "https://shikimori.one/${screenshots[0].preview}",
@@ -267,7 +267,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
 
     private fun setDescription(description: String?) {
         if (description == null) {
-            binding.descriptionLayout.root.isVisible = false
+            binding.descriptionLayout.root.hide()
         } else {
             binding.descriptionLayout.description.text = description
         }
@@ -275,7 +275,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
 
     private fun setGlobalRating(rating: String) {
         if (rating == "0.0") {
-            binding.animeGlobalRating.root.isVisible = false
+            binding.animeGlobalRating.root.hide()
             return
         }
         binding.animeGlobalRating.globalRating.ratingBar.setIsIndicator(true)
@@ -315,13 +315,13 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         }
 
         binding.userRateActionButton.setOnClickListener {
-            binding.userRateActionButton.visibility = View.GONE
+            binding.userRateActionButton.hide()
             binding.userRate.root.expand(binding.root)
         }
 
         binding.userRate.saveButton.setOnClickListener {
             binding.userRate.root.collapse(0, binding.root)
-            binding.userRateActionButton.visibility = View.VISIBLE
+            binding.userRateActionButton.show()
 
             val episodes = try {
                 binding.userRate.episodesInput.text.toString().toInt()
@@ -353,9 +353,9 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
     }
 
     private fun setHeadLines() {
-        binding.characters.headline.link.isVisible = true
-        binding.persons.headline.link.isVisible = true
-        binding.screenshots.headline.link.isVisible = true
+        binding.characters.headline.link.show()
+        binding.persons.headline.link.show()
+        binding.screenshots.headline.link.show()
         binding.characters.headline.title.text =
             getString(R.string.main_characters_headline_title)
         binding.persons.headline.title.text = getString(R.string.authors_headline_title)
@@ -417,7 +417,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                 }
             }
         } else {
-            binding.externalLinks.root.isVisible = false
+            binding.externalLinks.root.hide()
         }
     }
 

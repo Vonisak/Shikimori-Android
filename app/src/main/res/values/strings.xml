@@ -54,6 +54,7 @@
     <string name="main_characters_headline_title">Главные герои</string>
     <string name="support_characters_headline_title">Второстепенные герои</string>
     <string name="person_roles_headline_title">Роли в аниме</string>
+    <string name="empty_view">Пустое поле</string>
 
     <!--  Arrays  -->
     <string-array name="rating_notice_array">

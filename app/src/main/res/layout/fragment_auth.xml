@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,30 +8,51 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/auth"
-        android:layout_width="wrap_content"
+        style="@style/MyButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
         android:text="@string/get_auth_code"
-        android:layout_marginTop="275dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintBottom_toTopOf="@id/auth_button"
+        app:layout_constraintEnd_toEndOf="@id/textInputLayout"
+        app:layout_constraintStart_toStartOf="@id/textInputLayout"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/auth_input"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/auth"
-        app:layout_constraintStart_toStartOf="@id/auth"
-        app:layout_constraintEnd_toEndOf="@id/auth"
-        android:hint="@string/input_auth_code"/>
+        android:layout_marginHorizontal="15dp"
+        android:hint="@string/input_auth_code"
+        android:theme="@style/TextInputEditText"
+        app:boxBackgroundColor="@color/white"
+        app:boxStrokeColor="@color/rating_bar_stars_color"
+        app:hintTextColor="@color/rating_bar_stars_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/auth"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/auth_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/auth_button"
+        style="@style/MyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/auth_input"
-        app:layout_constraintStart_toStartOf="@id/auth_input"
-        app:layout_constraintEnd_toEndOf="@id/auth_input"
-        android:text="@string/auth_button"/>
+        android:layout_marginBottom="150dp"
+        android:text="@string/auth_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

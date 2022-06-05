@@ -18,12 +18,11 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/user_rate_action_button"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/MyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:text="@string/add_in_my_list"
-            android:textColor="@color/gist_item_color"
             android:visibility="gone" />
 
         <include

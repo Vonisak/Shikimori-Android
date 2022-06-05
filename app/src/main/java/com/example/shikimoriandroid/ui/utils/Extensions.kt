@@ -1,5 +1,7 @@
 package com.example.shikimoriandroid.ui.utils
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Resources
@@ -12,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.animation.doOnEnd
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.example.shikimoriandroid.R
@@ -131,6 +134,32 @@ fun ImageView.openImageViewer(fragment: Fragment, screenshots: List<Screenshot>,
     }.withStartPosition(position)
         .withTransitionFrom(this)
         .show()
+}
+
+fun View.shakeAnimation() {
+    val left = ObjectAnimator.ofFloat(this, View.TRANSLATION_X, 10F).apply {
+        duration = 100L
+    }
+
+    val right = ObjectAnimator.ofFloat(this, View.TRANSLATION_X, 10F, -20F).apply {
+        duration = 100L
+    }
+
+    val default = ObjectAnimator.ofFloat(this, View.TRANSLATION_X, -20F, 0F).apply {
+        duration = 100L
+    }
+
+    val animatorSet = AnimatorSet()
+    animatorSet.play(right).before(default).after(left)
+    animatorSet.start()
+}
+
+fun View.hide() {
+    this.isVisible = false
+}
+
+fun View.show() {
+    this.isVisible = true
 }
 
 fun Fragment.toastLong(text: String) {

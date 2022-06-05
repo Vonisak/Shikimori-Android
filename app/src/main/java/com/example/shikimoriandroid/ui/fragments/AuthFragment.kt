@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import com.example.shikimoriandroid.R
 import com.example.shikimoriandroid.domain.utils.Constants
 import com.example.shikimoriandroid.databinding.FragmentAuthBinding
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.AuthViewModel
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.ui.navigation.Screens
+import com.example.shikimoriandroid.ui.utils.shakeAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,9 +34,9 @@ class AuthFragment : BaseBottomNavFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentAuthBinding.inflate(inflater, container, false)
         (activity as MainActivity).supportActionBar?.title = TITLE
+
         observeModel()
         initListeners()
 
@@ -44,7 +46,12 @@ class AuthFragment : BaseBottomNavFragment() {
     private fun initListeners() {
         binding.authButton.setOnClickListener {
             val authCode = binding.authInput.text.toString()
-            viewModel.getTokens(authCode)
+            if (authCode == "") {
+                binding.textInputLayout.shakeAnimation()
+                binding.authInput.error = getString(R.string.empty_view)
+            } else {
+                viewModel.getTokens(authCode)
+            }
         }
 
         binding.auth.setOnClickListener {
@@ -64,8 +71,8 @@ class AuthFragment : BaseBottomNavFragment() {
                     viewModel.replaceScreen(Screens.profile())
                 }
                 is State.Fail -> {
-                    Toast.makeText(requireContext(), state.error.toString(), Toast.LENGTH_SHORT)
-                        .show()
+                    binding.textInputLayout.shakeAnimation()
+                    binding.authInput.error = state.error?.message
                 }
             }
         }

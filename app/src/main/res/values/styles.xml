@@ -33,4 +33,8 @@
         <item name="colorControlActivated">@color/rating_bar_stars_color</item>
     </style>
 
+    <style name="MyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/gist_item_color</item>
+    </style>
+
 </resources>
