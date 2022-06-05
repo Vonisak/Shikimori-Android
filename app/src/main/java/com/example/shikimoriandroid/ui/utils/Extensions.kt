@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import android.transition.TransitionManager
 import android.util.Log
 import android.util.TypedValue
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -21,12 +23,18 @@ import com.example.shikimoriandroid.R
 import com.example.shikimoriandroid.data.model.anime.ExternalLink
 import com.example.shikimoriandroid.data.model.anime.Screenshot
 import com.example.shikimoriandroid.data.model.anime.Stats
+import com.example.shikimoriandroid.data.model.user.ActivityItem
 import com.example.shikimoriandroid.databinding.AnimePageGistItemBinding
 import com.example.shikimoriandroid.databinding.ExternalLinkItemBinding
+import com.example.shikimoriandroid.databinding.UserActivityItemBinding
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.stfalcon.imageviewer.StfalconImageViewer
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 fun Number.toPx() = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP,
@@ -34,7 +42,7 @@ fun Number.toPx() = TypedValue.applyDimension(
     Resources.getSystem().displayMetrics
 )
 
-fun View.expand(root: ViewGroup) {
+fun View.expandWidth(root: ViewGroup) {
     TransitionManager.beginDelayedTransition(root)
     this.updateLayoutParams {
         height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -83,17 +91,52 @@ fun ViewGroup.addViewWithLayout(stats: Stats, maxValue: Int, maxWidth: Int) {
     lBinding.name.text = stats.name
 
     if (stats.value == maxValue) {
-        lBinding.value.expand(maxWidth) {
+        lBinding.value.expandWidth(maxWidth) {
             lBinding.value.text = stats.value.toString()
         }
     } else {
         val newWidth = (maxWidth * stats.value) / maxValue
-        lBinding.value.expand(newWidth) {
+        lBinding.value.expandWidth(newWidth) {
             if (valueIsVisible) {
                 lBinding.value.text = stats.value.toString()
             }
 
         }
+    }
+
+    this.addView(layout)
+}
+
+fun ViewGroup.addViewOnUserActivity(activityItem: ActivityItem, maxValue: Int, maxHeight: Int) {
+    var valueIsVisible = true
+    val heightPercent = (100 * activityItem.value) / maxValue
+    if (heightPercent <= 1) {
+        valueIsVisible = false
+    }
+
+    val li = LayoutInflater.from(context)
+    val layout: View = li.inflate(R.layout.user_activity_item, null)
+    val lBinding = UserActivityItemBinding.bind(layout)
+
+    lBinding.value.setOnClickListener {
+        val firstDate = activityItem.date[0].toDateTime()
+        val secondDate = activityItem.date[1].toDateTime()
+        val message = "${activityItem.value}: с $firstDate по $secondDate"
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    }
+
+    if (activityItem.value == maxValue) {
+        lBinding.value.expandHeight(maxHeight) {
+            lBinding.value.text = activityItem.value.toString()
+        }
+    } else {
+        val newHeight = (maxHeight * activityItem.value) / maxValue
+        lBinding.value.expandHeight(newHeight) {
+            if (valueIsVisible) {
+                lBinding.value.text = activityItem.value.toString()
+            }
+        }
+
     }
 
     this.addView(layout)
@@ -110,11 +153,22 @@ fun ViewGroup.addLink(externalLink: ExternalLink, onClick: () -> Unit) {
     this.addView(layout)
 }
 
-fun View.expand(to: Int, onEnd: () -> Unit) {
+fun View.expandWidth(to: Int, onEnd: () -> Unit) {
     ValueAnimator.ofInt(0, to).apply {
         duration = 1000L
         addUpdateListener {
-            this@expand.updateLayoutParams { width = (animatedValue as Int) }
+            this@expandWidth.updateLayoutParams { width = (animatedValue as Int) }
+        }
+        this.doOnEnd { onEnd() }
+        start()
+    }
+}
+
+fun View.expandHeight(to: Int, onEnd: () -> Unit) {
+    ValueAnimator.ofInt(0, to).apply {
+        duration = 1000L
+        addUpdateListener {
+            this@expandHeight.updateLayoutParams { height = (animatedValue as Int) }
         }
         this.doOnEnd { onEnd() }
         start()
@@ -168,4 +222,20 @@ fun Fragment.toastLong(text: String) {
 
 fun Fragment.toastShort(text: String) {
     Toast.makeText(this.requireContext(), text, Toast.LENGTH_SHORT).show()
+}
+
+private fun Long.toDateTime(): String {
+    val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH)
+    val netDate = Date(this * 1000)
+    return sdf.format(netDate)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun parseDate(date: String): String {
+    // пример даты: 2022-06-03T22:42:36.314+03:00
+    val pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+    val dateTime = LocalDateTime.parse(date, DateTimeFormatter.ofPattern(pattern))
+    val dmy = dateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+    val hm = dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+    return "$dmy в $hm"
 }

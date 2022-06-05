@@ -15,7 +15,7 @@ import com.example.shikimoriandroid.presentation.viewModels.CharacterViewModel
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.ui.utils.collapse
-import com.example.shikimoriandroid.ui.utils.expand
+import com.example.shikimoriandroid.ui.utils.expandWidth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -79,7 +79,7 @@ class CharacterInfoFragment(private val characterId: Int) : Fragment() {
                 descView.collapse(viewHeight, binding.root)
                 moreBtn.setImageResource(R.drawable.outline_expand_more_24)
             } else {
-                descView.expand(binding.root)
+                descView.expandWidth(binding.root)
                 moreBtn.setImageResource(R.drawable.outline_expand_less_24)
             }
         }

@@ -2,6 +2,7 @@ package com.example.shikimoriandroid.domain.repository
 
 import com.example.shikimoriandroid.data.model.anime.UserRates
 import com.example.shikimoriandroid.data.model.user.AnimeRates
+import com.example.shikimoriandroid.data.model.user.History
 import com.example.shikimoriandroid.data.model.user.UserInfo
 import com.example.shikimoriandroid.domain.utils.Constants
 
@@ -32,4 +33,6 @@ interface ShikimoriUserRepository {
         accessToken: String,
         userRate: UserRates
     )
+
+    suspend fun getHistory(accessToken: String, userId: Int, limit: Int): List<History>
 }

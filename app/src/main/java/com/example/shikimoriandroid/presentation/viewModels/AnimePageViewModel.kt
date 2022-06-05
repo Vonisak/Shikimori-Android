@@ -8,7 +8,6 @@ import com.example.shikimoriandroid.data.model.anime.ExternalLink
 import com.example.shikimoriandroid.data.model.anime.Role
 import com.example.shikimoriandroid.data.model.anime.UserRates
 import com.example.shikimoriandroid.domain.usecases.*
-import com.example.shikimoriandroid.ui.utils.MutableLiveEvent
 import com.example.shikimoriandroid.ui.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler

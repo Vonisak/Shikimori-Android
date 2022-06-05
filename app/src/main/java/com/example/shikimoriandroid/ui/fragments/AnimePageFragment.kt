@@ -12,7 +12,6 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isEmpty
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +22,6 @@ import com.example.shikimoriandroid.data.model.anime.*
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.databinding.FragmentAnimePageBinding
-import com.example.shikimoriandroid.domain.utils.Constants
 import com.example.shikimoriandroid.presentation.viewModels.AnimePageViewModel
 import com.example.shikimoriandroid.ui.adapters.CharacterAdapter
 import com.example.shikimoriandroid.ui.adapters.PersonAdapter
@@ -294,7 +292,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                 descView.collapse(viewHeight, binding.root)
                 moreBtn.setImageResource(R.drawable.outline_expand_more_24)
             } else {
-                descView.expand(binding.root)
+                descView.expandWidth(binding.root)
                 moreBtn.setImageResource(R.drawable.outline_expand_less_24)
             }
         }
@@ -316,7 +314,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
 
         binding.userRateActionButton.setOnClickListener {
             binding.userRateActionButton.hide()
-            binding.userRate.root.expand(binding.root)
+            binding.userRate.root.expandWidth(binding.root)
         }
 
         binding.userRate.saveButton.setOnClickListener {

@@ -1,15 +1,14 @@
 package com.example.shikimoriandroid.presentation.viewModels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.example.shikimoriandroid.data.model.user.History
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.data.model.user.UserInfo
 import com.example.shikimoriandroid.domain.usecases.GetAccessTokenUseCase
 import com.example.shikimoriandroid.domain.usecases.GetCurrentUserUseCase
 import com.example.shikimoriandroid.domain.usecases.GetUserByIdUseCase
-import com.github.terrakok.cicerone.Router
+import com.example.shikimoriandroid.domain.usecases.GetUserHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.lang.NullPointerException
@@ -19,12 +18,16 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getUserByIdUseCase: GetUserByIdUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val getUserHistoryUseCase: GetUserHistoryUseCase
 ) :
     NavigationModel() {
 
     private val _userProfileState = MutableLiveData<State<UserInfo>>()
     val userProfileState: LiveData<State<UserInfo>> = _userProfileState
+
+    private val _historyState = MutableLiveData<State<List<History>>>()
+    val historyState: LiveData<State<List<History>>> = _historyState
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         handleError(throwable)
@@ -47,6 +50,26 @@ class ProfileViewModel @Inject constructor(
             }
         }
 
+    }
+
+
+    fun getUserHistory(limit: Int) {
+        _historyState.value = State.Pending()
+        var accessToken = getAccessTokenUseCase()
+
+        CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            if (accessToken == null) accessToken = ""
+            val userId = getCurrentUserUseCase("Bearer $accessToken").id
+            _historyState.postValue(
+                State.Success(
+                    getUserHistoryUseCase(
+                        "Bearer $accessToken",
+                        userId,
+                        limit
+                    )
+                )
+            )
+        }
     }
 
     private fun handleError(error: Throwable) {

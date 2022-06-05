@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    android:id="@+id/swipe_refresh"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.ProfileFragment">
 
     <androidx.core.widget.NestedScrollView
@@ -19,15 +18,24 @@
 
             <include
                 android:id="@+id/profile_header"
-                layout="@layout/profile_header"/>
+                layout="@layout/profile_header" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/user_list"
+                style="@style/MyButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/profile_user_list"/>
+                android:text="@string/profile_user_list" />
+
+            <include
+                android:id="@+id/user_anime_stats"
+                layout="@layout/anime_page_gist" />
+
+            <include
+                android:id="@+id/user_activity"
+                layout="@layout/user_activity" />
 
         </LinearLayout>
 

@@ -40,6 +40,7 @@
     <string name="person_birth_date_prefix">Дата рождения:</string>
     <string name="person_job_prefix">Работа:</string>
     <string name="success_post">Данные сохранены</string>
+    <string name="empty_view">Пустое поле</string>
 
     <!--  Headline titles  -->
     <string name="other_sources_headline_title">Другие источники</string>
@@ -54,7 +55,8 @@
     <string name="main_characters_headline_title">Главные герои</string>
     <string name="support_characters_headline_title">Второстепенные герои</string>
     <string name="person_roles_headline_title">Роли в аниме</string>
-    <string name="empty_view">Пустое поле</string>
+    <string name="user_anime_statuses_headline_title">Аниме статистика</string>
+    <string name="user_activity_headline_title">Активность</string>
 
     <!--  Arrays  -->
     <string-array name="rating_notice_array">
@@ -76,6 +78,14 @@
         <item>Отложено</item>
         <item>Запланировано</item>
         <item>Смотрю</item>
+    </string-array>
+
+    <string-array name="user_profile_anime_statuses">
+        <item>Запланировано</item>
+        <item>Смотрю</item>
+        <item>Просмотрено</item>
+        <item>Отложено</item>
+        <item>Брошено</item>
     </string-array>
 
     <string-array name="user_anime_statuses_json">

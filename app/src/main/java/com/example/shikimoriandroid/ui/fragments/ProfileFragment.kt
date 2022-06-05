@@ -5,14 +5,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.fragment.app.viewModels
-import com.example.shikimoriandroid.ui.adapters.GlideAdapter
+import com.example.shikimoriandroid.R
+import com.example.shikimoriandroid.data.model.anime.Stats
+import com.example.shikimoriandroid.data.model.user.ActivityItem
 import com.example.shikimoriandroid.databinding.FragmentProfileBinding
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.ProfileViewModel
 import com.example.shikimoriandroid.ui.activity.MainActivity
+import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.ui.navigation.Screens
+import com.example.shikimoriandroid.ui.utils.addViewOnUserActivity
+import com.example.shikimoriandroid.ui.utils.addViewWithLayout
+import com.example.shikimoriandroid.ui.utils.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,6 +34,7 @@ class ProfileFragment : BaseBottomNavFragment() {
     private val binding get() = _binding!!
     private val glideAdapter = GlideAdapter(this)
     private val viewModel: ProfileViewModel by viewModels()
+    private var isCreate = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,10 +42,17 @@ class ProfileFragment : BaseBottomNavFragment() {
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         (activity as MainActivity).supportActionBar?.title = TITLE
-        viewModel.getProfileInfo()
 
+        if (isCreate) {
+            isCreate = false
+            viewModel.getProfileInfo()
+            viewModel.getUserHistory(3)
+        }
+
+        setHeadlines()
         observeModel()
         listeners()
+
         return binding.root
     }
 
@@ -51,44 +66,83 @@ class ProfileFragment : BaseBottomNavFragment() {
     }
 
     private fun observeModel() {
-        viewModel.userProfileState.observe(viewLifecycleOwner) { it ->
-            when (it) {
+        viewModel.userProfileState.observe(viewLifecycleOwner) { profileInfo ->
+            when (profileInfo) {
                 is State.Pending -> {
                     binding.swipeRefresh.isRefreshing = true
                 }
                 is State.Fail -> {
                     binding.swipeRefresh.isRefreshing = false
-                    Toast.makeText(requireContext(), "Fail: ${it.error}", Toast.LENGTH_SHORT).show()
+                    this.toastShort("Fail: ${profileInfo.error}")
                 }
                 is State.Success -> {
-                    Log.i("TAG", it.data.toString())
-                    binding.profileHeader.profileNickname.text = it.data.nickname
+                    binding.profileHeader.nickname.text = profileInfo.data.nickname
 
                     glideAdapter.loadImage(
-                        it.data.images.imageX148,
-                        binding.profileHeader.profileImage
+                        profileInfo.data.images.imageX148,
+                        binding.profileHeader.avatar
                     )
 
-                    binding.profileHeader.profilePlanned.text =
-                        it.data.stats.statuses.anime[0].size.toString()
-                    binding.profileHeader.profileWatching.text =
-                        it.data.stats.statuses.anime[1].size.toString()
-                    binding.profileHeader.profileCompleted.text =
-                        it.data.stats.statuses.anime[2].size.toString()
-                    binding.profileHeader.profileOnHold.text =
-                        it.data.stats.statuses.anime[3].size.toString()
-                    binding.profileHeader.profileDropped.text =
-                        it.data.stats.statuses.anime[4].size.toString()
-
-                    var info = ""
-                    it.data.commonInfo.forEachIndexed { index, s ->
-                        if (index != it.data.commonInfo.size - 1) info += "$s / "
+                    val userAnimeStatuses = profileInfo.data.stats.statuses.anime
+                    val statuses = resources.getStringArray(R.array.user_profile_anime_statuses)
+                    val stats = userAnimeStatuses.mapIndexed { i, animeStatus ->
+                        Stats(statuses[i], animeStatus.size)
                     }
-                    binding.profileHeader.profileCommonInfo.text = info
+
+                    setUserStats(stats)
+                    setUserActivity(profileInfo.data.stats.activity)
+
+//                    var info = ""
+//                    profileInfo.data.commonInfo.forEachIndexed { index, s ->
+//                        if (index != profileInfo.data.commonInfo.size - 1) info += "$s / "
+//                    }
+                    // binding.profileHeader.profileCommonInfo.text = info
 
                     binding.swipeRefresh.isRefreshing = false
                 }
             }
         }
+
+        viewModel.historyState.observe(viewLifecycleOwner) { history ->
+            when (history) {
+                is State.Pending -> {
+                }
+                is State.Success -> {
+                    Log.i("TAG", "history: ${history.data}")
+                }
+                is State.Fail -> {
+                    Log.i("TAG", "error: ${history.error}")
+                }
+            }
+        }
+    }
+
+    private fun setUserStats(statuses: List<Stats>) {
+        if (binding.userAnimeStats.gistContainer.isEmpty()) {
+            val maxStatus = statuses.maxOf { it.value }
+            val maxWidth = resources.getDimensionPixelSize(R.dimen.gist_max_width_statuses)
+            statuses.forEach {
+                binding.userAnimeStats.gistContainer.addViewWithLayout(it, maxStatus, maxWidth)
+            }
+        }
+    }
+
+    private fun setUserActivity(activity: List<ActivityItem>) {
+        if (binding.userActivity.activityContainer.isNotEmpty()) return
+        val maxHeight = resources.getDimensionPixelSize(R.dimen.gist_max_height_activity)
+        val maxValue = activity.maxOf { it.value }
+        activity.forEach { activityItem ->
+            binding.userActivity.activityContainer.addViewOnUserActivity(
+                activityItem,
+                maxValue,
+                maxHeight
+            )
+        }
+    }
+
+    private fun setHeadlines() {
+        binding.userAnimeStats.headline.title.text =
+            getString(R.string.user_anime_statuses_headline_title)
+        binding.userActivity.headline.title.text = getString(R.string.user_activity_headline_title)
     }
 }
