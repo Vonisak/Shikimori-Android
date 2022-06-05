@@ -38,4 +38,6 @@ class AnimeDataSource @Inject constructor(private val api: ShikimoriAnimeApi) {
     suspend fun getPerson(id: Int): PersonInfo = api.getPerson(id)
 
     suspend fun getScreenshots(id: Int): List<Screenshot> = api.getScreenshots(id)
+
+    suspend fun getExternalLinks(id: Int): List<ExternalLink> = api.getExternalLinks(id)
 }

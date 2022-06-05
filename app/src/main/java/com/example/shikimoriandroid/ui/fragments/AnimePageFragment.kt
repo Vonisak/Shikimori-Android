@@ -1,5 +1,7 @@
 package com.example.shikimoriandroid.ui.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,13 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shikimoriandroid.domain.utils.AnimeStringSwitcher
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.R
-import com.example.shikimoriandroid.data.model.anime.Screenshot
-import com.example.shikimoriandroid.data.model.anime.Stats
+import com.example.shikimoriandroid.data.model.anime.*
 import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.example.shikimoriandroid.databinding.FragmentAnimePageBinding
-import com.example.shikimoriandroid.data.model.anime.UserRate
-import com.example.shikimoriandroid.data.model.anime.UserRates
+import com.example.shikimoriandroid.domain.utils.Constants
 import com.example.shikimoriandroid.presentation.viewModels.AnimePageViewModel
 import com.example.shikimoriandroid.ui.adapters.CharacterAdapter
 import com.example.shikimoriandroid.ui.adapters.PersonAdapter
@@ -57,6 +57,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
             isCreate = false
             viewModel.getAnime(animeId)
             viewModel.getRoles(animeId)
+            viewModel.getExternalLinks(animeId)
         }
 
         val userStatuses = resources.getStringArray(R.array.user_anime_statuses).toList()
@@ -181,7 +182,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                     Toast.makeText(activity, it.error.toString(), Toast.LENGTH_SHORT).show()
                 }
                 is State.Success -> {
-                    Toast.makeText(activity, "success", Toast.LENGTH_SHORT).show()
+                    this.toastLong(getString(R.string.success_post))
                 }
             }
         }
@@ -194,14 +195,14 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
             }
         }
 
-        viewModel.rolesState.observe(viewLifecycleOwner) { state ->
-            when (state) {
+        viewModel.rolesState.observe(viewLifecycleOwner) { roles ->
+            when (roles) {
                 is State.Pending -> {
                 }
                 is State.Success -> {
 
-                    val characters = state.data.filter { it.characterPreview != null }
-                    val persons = state.data.filter { it.personPreview != null }
+                    val characters = roles.data.filter { it.characterPreview != null }
+                    val persons = roles.data.filter { it.personPreview != null }
 
                     val personFilterList =
                         resources.getStringArray(R.array.anime_page_person_filter).toList()
@@ -223,6 +224,18 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                     binding.characters.headline.root.setOnClickListener {
                         viewModel.navigateTo(Screens.characterList(characters))
                     }
+                }
+                is State.Fail -> {
+                }
+            }
+        }
+
+        viewModel.externalLinksState.observe(viewLifecycleOwner) { externalLinks ->
+            when (externalLinks) {
+                is State.Pending -> {
+                }
+                is State.Success -> {
+                    setExternalLinks(externalLinks.data)
                 }
                 is State.Fail -> {
                 }
@@ -357,6 +370,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         binding.animeGlobalRating.headline.title.text =
             getString(R.string.global_rating_headline_title)
         binding.screenshots.headline.title.text = getString(R.string.screenshots_headline_title)
+        binding.externalLinks.headline.title.text = getString(R.string.other_sources_headline_title)
     }
 
     private fun initPersonRecycler() {
@@ -381,12 +395,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         val maxScore = scores.maxOf { it.value }
         val maxWidth = resources.getDimensionPixelSize(R.dimen.gist_max_width_scores)
         scores.forEach {
-            binding.usersScores.gistContainer.addViewWithLayout(
-                it,
-                requireContext(),
-                maxScore,
-                maxWidth
-            )
+            binding.usersScores.gistContainer.addViewWithLayout(it, maxScore, maxWidth)
         }
     }
 
@@ -394,12 +403,21 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         val maxStatus = statuses.maxOf { it.value }
         val maxWidth = resources.getDimensionPixelSize(R.dimen.gist_max_width_statuses)
         statuses.forEach {
-            binding.usersStatuses.gistContainer.addViewWithLayout(
-                it,
-                requireContext(),
-                maxStatus,
-                maxWidth
-            )
+            binding.usersStatuses.gistContainer.addViewWithLayout(it, maxStatus, maxWidth)
+        }
+    }
+
+    private fun setExternalLinks(externalLinks: List<ExternalLink>) {
+        if (externalLinks.isNotEmpty()) {
+            externalLinks.forEach { externalLink ->
+                binding.externalLinks.externalLinksContainer.addLink(externalLink) {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(externalLink.url)
+                    startActivity(intent)
+                }
+            }
+        } else {
+            binding.externalLinks.root.isVisible = false
         }
     }
 

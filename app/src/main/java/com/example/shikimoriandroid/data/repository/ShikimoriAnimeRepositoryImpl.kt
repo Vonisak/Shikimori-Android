@@ -31,4 +31,6 @@ class ShikimoriAnimeRepositoryImpl @Inject constructor(private val dataSource: A
     override suspend fun getPerson(id: Int): PersonInfo = dataSource.getPerson(id)
 
     override suspend fun getScreenshots(id: Int): List<Screenshot> = dataSource.getScreenshots(id)
+
+    override suspend fun getExternalLinks(id: Int): List<ExternalLink> = dataSource.getExternalLinks(id)
 }

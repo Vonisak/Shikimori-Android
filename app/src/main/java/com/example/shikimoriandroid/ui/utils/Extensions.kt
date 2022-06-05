@@ -10,13 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.animation.doOnEnd
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.example.shikimoriandroid.R
+import com.example.shikimoriandroid.data.model.anime.ExternalLink
 import com.example.shikimoriandroid.data.model.anime.Screenshot
 import com.example.shikimoriandroid.data.model.anime.Stats
 import com.example.shikimoriandroid.databinding.AnimePageGistItemBinding
+import com.example.shikimoriandroid.databinding.ExternalLinkItemBinding
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -64,7 +67,7 @@ fun ChipGroup.addChip(context: Context, label: String, onClick: () -> Unit) {
     }
 }
 
-fun ViewGroup.addViewWithLayout(stats: Stats, context: Context, maxValue: Int, maxWidth: Int) {
+fun ViewGroup.addViewWithLayout(stats: Stats, maxValue: Int, maxWidth: Int) {
     var valueIsVisible = true
     val widthPercent = (100 * stats.value) / maxValue
     if (widthPercent <= 10) {
@@ -93,6 +96,17 @@ fun ViewGroup.addViewWithLayout(stats: Stats, context: Context, maxValue: Int, m
     this.addView(layout)
 }
 
+fun ViewGroup.addLink(externalLink: ExternalLink, onClick: () -> Unit) {
+    val li = LayoutInflater.from(context)
+    val layout: View = li.inflate(R.layout.external_link_item, null)
+    val lBinding = ExternalLinkItemBinding.bind(layout)
+
+    lBinding.link.text = externalLink.name.replace('_', ' ')
+    lBinding.link.setOnClickListener { onClick() }
+
+    this.addView(layout)
+}
+
 fun View.expand(to: Int, onEnd: () -> Unit) {
     ValueAnimator.ofInt(0, to).apply {
         duration = 1000L
@@ -117,4 +131,12 @@ fun ImageView.openImageViewer(fragment: Fragment, screenshots: List<Screenshot>,
     }.withStartPosition(position)
         .withTransitionFrom(this)
         .show()
+}
+
+fun Fragment.toastLong(text: String) {
+    Toast.makeText(this.requireContext(), text, Toast.LENGTH_LONG).show()
+}
+
+fun Fragment.toastShort(text: String) {
+    Toast.makeText(this.requireContext(), text, Toast.LENGTH_SHORT).show()
 }

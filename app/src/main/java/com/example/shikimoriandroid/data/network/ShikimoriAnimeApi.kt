@@ -41,4 +41,9 @@ interface ShikimoriAnimeApi {
     suspend fun getScreenshots(
         @Path("id") id: Int
     ): List<Screenshot>
+
+    @GET("api/animes/{id}/external_links")
+    suspend fun getExternalLinks(
+        @Path("id") id: Int
+    ): List<ExternalLink>
 }

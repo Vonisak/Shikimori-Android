@@ -27,4 +27,6 @@ interface ShikimoriAnimeRepository {
     suspend fun getPerson(id: Int): PersonInfo
 
     suspend fun getScreenshots(id: Int): List<Screenshot>
+
+    suspend fun getExternalLinks(id: Int): List<ExternalLink>
 }

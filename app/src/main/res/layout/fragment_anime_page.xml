@@ -69,6 +69,10 @@
             android:id="@+id/screenshots"
             layout="@layout/anime_page_screenshots" />
 
+        <include
+            android:id="@+id/external_links"
+            layout="@layout/external_links"/>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.core.widget.NestedScrollView>

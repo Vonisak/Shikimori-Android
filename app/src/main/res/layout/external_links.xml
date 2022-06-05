@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/headline"
+        layout="@layout/headline" />
+
+    <LinearLayout
+        android:id="@+id/external_links_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@id/headline"
+        app:layout_constraintStart_toStartOf="@id/headline"
+        app:layout_constraintTop_toBottomOf="@id/headline" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
