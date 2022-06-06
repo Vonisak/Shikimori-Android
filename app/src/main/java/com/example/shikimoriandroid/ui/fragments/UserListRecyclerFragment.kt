@@ -97,12 +97,7 @@ class UserListRecyclerFragment(val position: Int) : Fragment() {
                 is State.Success -> {
                     if (!userList.containsAll(it.data)) {
                         userList.addAll(it.data)
-                        Toast.makeText(
-                            requireContext(),
-                            "length: ${userList.size}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        Log.i("TAG", it.data.toString())
+                        //Log.i("TAG", it.data.toString())
                         binding.userListRecycler.adapter?.notifyDataSetChanged()
                         loading = true
                     }

@@ -9,5 +9,6 @@ data class CharacterInfo(
     @SerializedName("image") val image: AnimeImage,
     @SerializedName("altname") val alterName: String,
     @SerializedName("japanese") val nameJap: String,
-    @SerializedName("description") val description: String
+    @SerializedName("description") val description: String,
+    @SerializedName("description_html") val descriptionHtml: String
 )

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="Аниме">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="description"
+            android:summary="Отображать описание"
+            android:title="Описание" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="screenshots"
+            android:summary="Отображать кадры"
+            android:title="Кадры" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Приложение"
+        app:allowDividerAbove="true">
+
+        <Preference
+            android:key="exit"
+            android:title="@string/sign_out_settings" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

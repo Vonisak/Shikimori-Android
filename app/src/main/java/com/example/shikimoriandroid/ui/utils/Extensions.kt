@@ -231,7 +231,7 @@ private fun Long.toDateTime(): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun parseDate(date: String): String {
+fun parseDate(date: String): String {
     // пример даты: 2022-06-03T22:42:36.314+03:00
     val pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
     val dateTime = LocalDateTime.parse(date, DateTimeFormatter.ofPattern(pattern))

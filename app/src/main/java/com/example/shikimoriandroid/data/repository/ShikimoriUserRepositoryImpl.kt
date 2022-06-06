@@ -36,6 +36,6 @@ class ShikimoriUserRepositoryImpl @Inject constructor(private val dataSource: Us
     override suspend fun createRate(userAgent: String, accessToken: String, userRate: UserRates) =
         dataSource.createRate(accessToken = accessToken, userRate = userRate)
 
-    override suspend fun getHistory(accessToken: String, userId: Int, limit: Int): List<History> =
-        dataSource.getHistory(accessToken = accessToken, userId = userId, limit = limit)
+    override suspend fun getHistory(accessToken: String, userId: Int, limit: Int, page: Int): List<History> =
+        dataSource.getHistory(accessToken = accessToken, userId = userId, limit = limit, page = page)
 }

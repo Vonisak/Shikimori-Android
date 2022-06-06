@@ -57,6 +57,7 @@
     <string name="person_roles_headline_title">Роли в аниме</string>
     <string name="user_anime_statuses_headline_title">Аниме статистика</string>
     <string name="user_activity_headline_title">Активность</string>
+    <string name="user_history_headline_title">История</string>
 
     <!--  Arrays  -->
     <string-array name="rating_notice_array">

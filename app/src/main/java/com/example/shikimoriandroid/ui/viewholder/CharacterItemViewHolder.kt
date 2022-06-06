@@ -20,8 +20,4 @@ class CharacterItemViewHolder(val view: View, private val glideAdapter: GlideAda
             onCharacterClick(character.id)
         }
     }
-
-    fun clearImage() = with(binding) {
-        image.setImageResource(0)
-    }
 }

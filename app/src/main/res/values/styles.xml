@@ -19,8 +19,7 @@
     </style>
 
     <style name="Bottom_Navigation" parent="@style/Widget.Design.BottomNavigationView">
-<!--        <item name="android:background">@color/top_bar_background</item>-->
-<!--        <item name="itemTextColor">@color/white</item>-->
+        <item name="color">@color/gist_item_color</item>
     </style>
 
     <style name="Headline_text_style">

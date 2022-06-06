@@ -91,4 +91,8 @@ dependencies {
 
     //ImageViewer
     implementation 'com.github.stfalcon-studio:StfalconImageViewer:v1.0.1'
+
+    //Preferences
+    implementation('androidx.preference:preference:1.2.0')
+
 }

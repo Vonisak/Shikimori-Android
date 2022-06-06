@@ -24,7 +24,6 @@ class MainAnimeListFragment(private val genre: String = "") :
     BaseBottomNavFragment(),
     SearchView.OnQueryTextListener,
     MainActivity.ItemReselectedListener,
-    MainActivity.BackListener,
     MainListBottomSheetFilterFragment.OnClickListener{
 
     companion object {
@@ -52,11 +51,6 @@ class MainAnimeListFragment(private val genre: String = "") :
     //private lateinit var sheetBehavior: BottomSheetBehavior<View>
     private val modalBottomSheet = MainListBottomSheetFilterFragment()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        (activity as MainActivity).setOnBackListener(this)
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,8 +61,6 @@ class MainAnimeListFragment(private val genre: String = "") :
 
         if (isCreate) {
             viewModel.getAnimeList(limit, page, order, searchStr, genre)
-            Log.i("TAG", animeList.toString())
-            Log.i("TAG", "createView")
             isCreate = false
         }
         observeModel()
@@ -118,8 +110,6 @@ class MainAnimeListFragment(private val genre: String = "") :
     }
 
     private fun observeModel() {
-        Log.i("TAG", "observeModel")
-
         viewModel.mainAnimeListState.observe(viewLifecycleOwner) {
             when (it) {
                 is State.Pending -> {
@@ -164,7 +154,6 @@ class MainAnimeListFragment(private val genre: String = "") :
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
-        Log.i("TAG", "textSubmit")
         searchStr = query
         page = 1
         animeList.clear()
@@ -177,15 +166,12 @@ class MainAnimeListFragment(private val genre: String = "") :
     }
 
     override fun onDestroy() {
-        Log.i("TAG", "destroy")
         isCreate = true
         _binding = null
-        (activity as MainActivity).setOnBackListener(null)
         super.onDestroy()
     }
 
     override fun reselect() {
-        Log.i("TAG", "reselect")
         searchStr = ""
         page = 1
         animeList.clear()
@@ -194,9 +180,5 @@ class MainAnimeListFragment(private val genre: String = "") :
 
     override fun onClick() {
         Log.i("TAG", "click button")
-    }
-
-    override fun onBack() {
-        (activity as MainActivity).bottomNavChecked(R.id.anime_list_item, true)
     }
 }

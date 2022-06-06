@@ -1,12 +1,15 @@
 package com.example.shikimoriandroid.ui.fragments
 
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import com.example.shikimoriandroid.R
 import com.example.shikimoriandroid.databinding.FragmentCharacterInfoBinding
@@ -25,6 +28,7 @@ class CharacterInfoFragment(private val characterId: Int) : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: CharacterViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,6 +42,7 @@ class CharacterInfoFragment(private val characterId: Int) : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun observeModel() {
         viewModel.characterState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -60,7 +65,8 @@ class CharacterInfoFragment(private val characterId: Int) : Fragment() {
                     binding.names.nameJap.text = state.data.nameJap
                     binding.names.alterNames.text = state.data.alterName
 
-                    binding.description.description.text = state.data.description
+                    binding.description.description.text =
+                        Html.fromHtml(state.data.descriptionHtml, Html.FROM_HTML_MODE_LEGACY)
                 }
                 is State.Fail -> {
                     Log.i("TAG", "Fail: ${state.error}")

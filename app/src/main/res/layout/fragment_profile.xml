@@ -37,6 +37,10 @@
                 android:id="@+id/user_activity"
                 layout="@layout/user_activity" />
 
+            <include
+                android:id="@+id/user_history"
+                layout="@layout/user_profile_history"/>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

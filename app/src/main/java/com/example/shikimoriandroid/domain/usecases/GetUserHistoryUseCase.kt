@@ -6,6 +6,6 @@ import javax.inject.Inject
 
 class GetUserHistoryUseCase @Inject constructor(private val repository: ShikimoriUserRepository) {
 
-    suspend operator fun invoke(accessToken: String, userId: Int, limit: Int): List<History> =
-        repository.getHistory(accessToken, userId, limit)
+    suspend operator fun invoke(accessToken: String, userId: Int, limit: Int, page: Int): List<History> =
+        repository.getHistory(accessToken, userId, limit, page)
 }

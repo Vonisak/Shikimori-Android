@@ -2,7 +2,9 @@ package com.example.shikimoriandroid.ui.fragments
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.view.isEmpty
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -42,6 +45,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
     private lateinit var personAdapter: PersonAdapter
     private var isCreate = true
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,6 +78,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         (activity as MainActivity).showBottomNav(false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun observeModel() {
         viewModel.animeInfoState.observe(viewLifecycleOwner) { it ->
             when (it) {
@@ -88,7 +93,6 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                     //Log.i("TAG", it.data.toString())
                     (activity as MainActivity).supportActionBar?.title = it.data.nameEng
                     val switcher = AnimeStringSwitcher()
-                    Log.i("TAG", it.data.ratesStats.toString())
                     when (it.data.status) {
                         "ongoing" -> {
                             binding.animeBasicInfo.episodes.hide()
@@ -118,7 +122,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                     binding.animeBasicInfo.animePageNameRus.text = it.data.nameRus
                     binding.animeBasicInfo.animePageType.text = switcher.kindSwitch(it.data.kind)
                     glide.loadImage(
-                        "https://shikimori.one/${it.data.poster.preview}",
+                        "https://shikimori.one/${it.data.poster.original}",
                         binding.header.poster
                     )
                     glide.loadImage(
@@ -166,7 +170,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                     setGlobalRating(it.data.score)
                     setUsersScores(it.data.ratesStats)
                     setUsersStatuses(it.data.statusesStats)
-                    setDescription(it.data.description)
+                    setDescription(it.data.descriptionHtml)
                     setScreenshots(it.data.screenshots)
                 }
             }
@@ -263,11 +267,13 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setDescription(description: String?) {
         if (description == null) {
             binding.descriptionLayout.root.hide()
         } else {
-            binding.descriptionLayout.description.text = description
+            binding.descriptionLayout.description.text =
+                Html.fromHtml(description, Html.FROM_HTML_MODE_COMPACT)
         }
     }
 

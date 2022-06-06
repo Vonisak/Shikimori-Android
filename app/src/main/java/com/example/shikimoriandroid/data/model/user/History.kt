@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 data class History(
     @SerializedName("created_at") val date: String,
-    @SerializedName("target") val animeInfo: AnimeInfo,
+    @SerializedName("target") val animeInfo: AnimeInfo?,
     @SerializedName("description") val description: String
 )

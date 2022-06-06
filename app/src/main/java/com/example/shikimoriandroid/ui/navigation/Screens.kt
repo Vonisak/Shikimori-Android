@@ -29,4 +29,6 @@ object Screens {
     fun personInfo(id: Int) = FragmentScreen { PersonInfoFragment(id) }
 
     fun screenshots(id: Int) = FragmentScreen { ScreenshotsFragment(id) }
+
+    fun userHistory() = FragmentScreen { UserHistoryFragment() }
 }

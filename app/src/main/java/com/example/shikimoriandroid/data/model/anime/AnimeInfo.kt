@@ -9,6 +9,7 @@ data class AnimeInfo(
     @SerializedName("episodes") val episodes: String,
     @SerializedName("image") val poster: AnimeImage,
     @SerializedName("description") val description: String?,
+    @SerializedName("description_html") val descriptionHtml: String?,
     @SerializedName("score") val score: String,
     @SerializedName("kind") val kind: String,
     @SerializedName("status") val status: String,

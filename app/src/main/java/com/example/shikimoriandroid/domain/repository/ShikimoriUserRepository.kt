@@ -34,5 +34,5 @@ interface ShikimoriUserRepository {
         userRate: UserRates
     )
 
-    suspend fun getHistory(accessToken: String, userId: Int, limit: Int): List<History>
+    suspend fun getHistory(accessToken: String, userId: Int, limit: Int, page: Int): List<History>
 }

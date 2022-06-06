@@ -45,6 +45,7 @@ interface ShikimoriUserApi {
         @Header("User-Agent") userAgent: String = Constants.appName,
         @Header("Authorization") accessToken: String,
         @Path("user_id") userId: Int,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
+        @Query("page") page: Int
     ): List<History>
 }

@@ -20,8 +20,7 @@ class ProfileViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val getUserHistoryUseCase: GetUserHistoryUseCase
-) :
-    NavigationModel() {
+) : NavigationModel() {
 
     private val _userProfileState = MutableLiveData<State<UserInfo>>()
     val userProfileState: LiveData<State<UserInfo>> = _userProfileState
@@ -53,7 +52,7 @@ class ProfileViewModel @Inject constructor(
     }
 
 
-    fun getUserHistory(limit: Int) {
+    fun getUserHistory(limit: Int, page: Int) {
         _historyState.value = State.Pending()
         var accessToken = getAccessTokenUseCase()
 
@@ -65,7 +64,8 @@ class ProfileViewModel @Inject constructor(
                     getUserHistoryUseCase(
                         "Bearer $accessToken",
                         userId,
-                        limit
+                        limit,
+                        page
                     )
                 )
             )

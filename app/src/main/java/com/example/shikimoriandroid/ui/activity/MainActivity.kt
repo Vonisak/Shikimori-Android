@@ -20,7 +20,6 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private lateinit var reselectedListener: ItemReselectedListener
-    private var onBackListener: BackListener? = null
     private val viewModel: MainViewModel by viewModels()
 
     @Inject
@@ -44,26 +43,26 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     private fun navSettings() {
         binding.bottomNavigation.setOnItemSelectedListener {
-            viewModel.newRootScreen(Screens.mainList())
+            //viewModel.newRootScreen(Screens.mainList())
             when (it.itemId) {
                 R.id.anime_list_item -> {
-                    viewModel.backTo(Screens.mainList())
+                    viewModel.newRootScreen(Screens.mainList())
                     binding.bottomNavigation.menu.findItem(R.id.anime_list_item).isChecked = true
                     true
                 }
                 R.id.anime_profile_item -> {
                     binding.bottomNavigation.menu.findItem(R.id.anime_profile_item).isChecked = true
                     if (viewModel.isUserAuth()) {
-                        viewModel.navigateTo(Screens.profile())
+                        viewModel.newRootScreen(Screens.profile())
                     } else {
-                        viewModel.navigateTo(Screens.auth())
+                        viewModel.newRootScreen(Screens.auth())
                     }
                     true
                 }
                 R.id.anime_settings_item -> {
                     binding.bottomNavigation.menu.findItem(R.id.anime_settings_item).isChecked =
                         true
-                    viewModel.navigateTo(Screens.settings())
+                    viewModel.newRootScreen(Screens.settings())
                     true
                 }
                 else -> false
@@ -87,12 +86,7 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        onBackListener?.onBack()
         viewModel.back()
-    }
-
-    fun bottomNavChecked(itemId: Int, checked: Boolean) {
-        binding.bottomNavigation.menu.findItem(itemId).isChecked = checked
     }
 
     override fun onDestroy() {
@@ -102,14 +96,6 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     fun setItemReselectedListener(listener: ItemReselectedListener) {
         reselectedListener = listener
-    }
-
-    fun setOnBackListener(listener: BackListener?) {
-        onBackListener = listener
-    }
-
-    interface BackListener {
-        fun onBack()
     }
 
     interface ItemReselectedListener {

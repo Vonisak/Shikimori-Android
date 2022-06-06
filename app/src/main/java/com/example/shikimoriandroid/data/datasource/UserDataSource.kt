@@ -32,6 +32,6 @@ class UserDataSource @Inject constructor(private val api: ShikimoriUserApi) {
     suspend fun createRate(accessToken: String, userRate: UserRates) =
         api.createRate(accessToken = accessToken, userRate = userRate)
 
-    suspend fun getHistory(accessToken: String, userId: Int, limit: Int): List<History> =
-        api.getHistory(accessToken = accessToken, userId = userId, limit = limit)
+    suspend fun getHistory(accessToken: String, userId: Int, limit: Int, page: Int): List<History> =
+        api.getHistory(accessToken = accessToken, userId = userId, limit = limit, page = page)
 }

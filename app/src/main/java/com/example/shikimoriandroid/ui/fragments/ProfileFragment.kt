@@ -16,9 +16,11 @@ import com.example.shikimoriandroid.presentation.entity.State
 import com.example.shikimoriandroid.presentation.viewModels.ProfileViewModel
 import com.example.shikimoriandroid.ui.activity.MainActivity
 import com.example.shikimoriandroid.ui.adapters.GlideAdapter
+import com.example.shikimoriandroid.ui.adapters.HistoryAdapter
 import com.example.shikimoriandroid.ui.navigation.Screens
 import com.example.shikimoriandroid.ui.utils.addViewOnUserActivity
 import com.example.shikimoriandroid.ui.utils.addViewWithLayout
+import com.example.shikimoriandroid.ui.utils.show
 import com.example.shikimoriandroid.ui.utils.toastShort
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,7 +48,7 @@ class ProfileFragment : BaseBottomNavFragment() {
         if (isCreate) {
             isCreate = false
             viewModel.getProfileInfo()
-            viewModel.getUserHistory(3)
+            viewModel.getUserHistory(2, 1)
         }
 
         setHeadlines()
@@ -62,6 +64,9 @@ class ProfileFragment : BaseBottomNavFragment() {
         }
         binding.userList.setOnClickListener {
             viewModel.navigateTo(Screens.userList())
+        }
+        binding.userHistory.headline.root.setOnClickListener {
+            viewModel.navigateTo(Screens.userHistory())
         }
     }
 
@@ -109,6 +114,11 @@ class ProfileFragment : BaseBottomNavFragment() {
                 }
                 is State.Success -> {
                     Log.i("TAG", "history: ${history.data}")
+                    val adapter = HistoryAdapter(glideAdapter) { animeId ->
+                        viewModel.navigateTo(Screens.animePage(animeId))
+                    }
+                    adapter.historyList = history.data
+                    binding.userHistory.history.recycler.adapter = adapter
                 }
                 is State.Fail -> {
                     Log.i("TAG", "error: ${history.error}")
@@ -141,8 +151,10 @@ class ProfileFragment : BaseBottomNavFragment() {
     }
 
     private fun setHeadlines() {
+        binding.userHistory.headline.link.show()
         binding.userAnimeStats.headline.title.text =
             getString(R.string.user_anime_statuses_headline_title)
         binding.userActivity.headline.title.text = getString(R.string.user_activity_headline_title)
+        binding.userHistory.headline.title.text = getString(R.string.user_history_headline_title)
     }
 }
