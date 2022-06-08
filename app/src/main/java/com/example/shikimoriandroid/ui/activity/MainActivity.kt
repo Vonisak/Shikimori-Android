@@ -36,6 +36,7 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
         setContentView(binding.root)
         navSettings()
 
+        viewModel.updateUserTokens()
         binding.mainToolbar.root.setNavigationOnClickListener { viewModel.back() }
 
         navigatorHolder.setNavigator(navigator)
@@ -43,7 +44,6 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
 
     private fun navSettings() {
         binding.bottomNavigation.setOnItemSelectedListener {
-            //viewModel.newRootScreen(Screens.mainList())
             when (it.itemId) {
                 R.id.anime_list_item -> {
                     viewModel.newRootScreen(Screens.mainList())
