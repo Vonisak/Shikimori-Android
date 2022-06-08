@@ -2,24 +2,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="Аниме">
+    <PreferenceCategory android:title="@string/pref_category_anime">
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
-            android:key="description"
-            android:summary="Отображать описание"
-            android:title="Описание" />
+            android:key="@string/description_id"
+            android:summary="@string/description_settings_summary"
+            android:title="@string/description_headline_title" />
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
-            android:key="screenshots"
-            android:summary="Отображать кадры"
-            android:title="Кадры" />
+            android:key="@string/screenshots_id"
+            android:summary="@string/screenshots_settings_summary"
+            android:title="@string/screenshots_headline_title" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Приложение"
+        android:title="@string/pref_category_app"
         app:allowDividerAbove="true">
 
         <Preference

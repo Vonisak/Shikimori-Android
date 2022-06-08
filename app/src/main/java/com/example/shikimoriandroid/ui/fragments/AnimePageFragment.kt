@@ -15,7 +15,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.isEmpty
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shikimoriandroid.domain.utils.AnimeStringSwitcher
@@ -57,6 +59,7 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
         viewModel.checkUserAuth()
         if (isCreate) {
             isCreate = false
+            viewModel.checkUserSettings()
             viewModel.getAnime(animeId)
             viewModel.getRoles(animeId)
             viewModel.getExternalLinks(animeId)
@@ -242,6 +245,14 @@ class AnimePageFragment(private val animeId: Int) : Fragment() {
                 is State.Fail -> {
                 }
             }
+        }
+
+        viewModel.screenshotsVisibility.observe(viewLifecycleOwner) { visibility ->
+            binding.screenshots.root.isVisible = visibility
+        }
+
+        viewModel.descriptionVisibility.observe(viewLifecycleOwner) { visibility ->
+            binding.descriptionLayout.root.isVisible = visibility
         }
     }
 

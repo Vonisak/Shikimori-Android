@@ -18,7 +18,6 @@
     <string name="get_auth_code">Получить код авторизации</string>
     <string name="input_auth_code">Код авторизации</string>
     <string name="auth_button">Авторизироваться</string>
-    <string name="sign_out_settings">Выйти из аккаунта</string>
     <string name="profile_planned">Запланировано:</string>
     <string name="profile_complete">Просмотрено:</string>
     <string name="profile_watching">Смотрю:</string>
@@ -58,6 +57,16 @@
     <string name="user_anime_statuses_headline_title">Аниме статистика</string>
     <string name="user_activity_headline_title">Активность</string>
     <string name="user_history_headline_title">История</string>
+
+    <!--  Settings  -->
+    <string name="description_id">description</string>
+    <string name="screenshots_id">screenshots</string>
+    <string name="exit_id">exit</string>
+    <string name="description_settings_summary">Отображать описание</string>
+    <string name="screenshots_settings_summary">Отображать кадры</string>
+    <string name="sign_out_settings">Выйти из аккаунта</string>
+    <string name="pref_category_anime">Аниме</string>
+    <string name="pref_category_app">Приложение</string>
 
     <!--  Arrays  -->
     <string-array name="rating_notice_array">

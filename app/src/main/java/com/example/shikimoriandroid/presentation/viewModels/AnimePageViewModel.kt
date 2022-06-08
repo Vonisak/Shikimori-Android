@@ -23,7 +23,9 @@ class AnimePageViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val getRolesUseCase: GetRolesUseCase,
-    private val getExternalLinksUseCase: GetExternalLinksUseCase
+    private val getExternalLinksUseCase: GetExternalLinksUseCase,
+    private val getScreenshotsVisibilityUseCase: GetScreenshotsVisibilityUseCase,
+    private val getDescriptionVisibilityUseCase: GetDescriptionVisibilityUseCase
 ) : NavigationModel() {
 
     private val _animeInfoState = MutableLiveData<State<AnimeInfo>>()
@@ -40,6 +42,13 @@ class AnimePageViewModel @Inject constructor(
 
     private val _externalLinksState = MutableLiveData<State<List<ExternalLink>>>()
     val externalLinksState: LiveData<State<List<ExternalLink>>> = _externalLinksState
+
+    private val _screenshotsVisibility = MutableLiveData<Boolean>()
+    val screenshotsVisibility: LiveData<Boolean> = _screenshotsVisibility
+
+    private val _descriptionVisibility = MutableLiveData<Boolean>()
+    val descriptionVisibility: LiveData<Boolean> = _descriptionVisibility
+
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         handleError(throwable)
@@ -100,5 +109,10 @@ class AnimePageViewModel @Inject constructor(
 
     fun checkUserAuth() {
         _userAuth.value = getAccessTokenUseCase() != null
+    }
+
+    fun checkUserSettings() {
+        _descriptionVisibility.value = getDescriptionVisibilityUseCase()
+        _screenshotsVisibility.value = getScreenshotsVisibilityUseCase()
     }
 }
