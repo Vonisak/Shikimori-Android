@@ -8,4 +8,4 @@
 - Просмотр главного списка аниме
 - Просмотр информации о аниме
 
-![profile](screens/1.jpg)
+![profile](app/screens/1.jpg)
