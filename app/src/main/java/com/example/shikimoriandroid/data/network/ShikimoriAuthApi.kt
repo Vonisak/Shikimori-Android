@@ -9,11 +9,12 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ShikimoriAuthApi {
+
     @FormUrlEncoded
     @POST("oauth/token")
     suspend fun getTokens(
         @Header("User-Agent") userAgent: String = Constants.appName,
-        @Field("grant_type") grantType: String = "authorization_code",
+        @Field("grant_type") grantType: String = Constants.grantTypeAuth,
         @Field("client_id") clientId: String = Constants.clientId,
         @Field("client_secret") clientSecret: String = Constants.clientSecret,
         @Field("code") authCode: String,
@@ -24,7 +25,7 @@ interface ShikimoriAuthApi {
     @POST("oauth/token")
     suspend fun updateTokens(
         @Header("User-Agent") userAgent: String = Constants.appName,
-        @Field("grant_type") grantType: String = "refresh_token",
+        @Field("grant_type") grantType: String = Constants.grantTypeRefresh,
         @Field("client_id") clientId: String = Constants.clientId,
         @Field("client_secret") clientSecret: String = Constants.clientSecret,
         @Field("refresh_token") refreshToken: String

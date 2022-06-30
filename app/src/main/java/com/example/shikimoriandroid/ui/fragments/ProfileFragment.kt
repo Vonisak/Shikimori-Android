@@ -97,12 +97,6 @@ class ProfileFragment : BaseBottomNavFragment() {
                     setUserStats(stats)
                     setUserActivity(profileInfo.data.stats.activity)
 
-//                    var info = ""
-//                    profileInfo.data.commonInfo.forEachIndexed { index, s ->
-//                        if (index != profileInfo.data.commonInfo.size - 1) info += "$s / "
-//                    }
-                    // binding.profileHeader.profileCommonInfo.text = info
-
                     binding.swipeRefresh.isRefreshing = false
                 }
             }
