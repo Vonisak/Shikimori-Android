@@ -46,7 +46,7 @@ class UserAnimeListViewModel @Inject constructor(
             _userListState.postValue(
                 State.Success(
                     getUserAnimeListUseCase(
-                        accessToken = accessToken,
+                        accessToken = "Bearer $accessToken",
                         userId = userId,
                         count = limit,
                         page = page,
